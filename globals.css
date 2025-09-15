@@ -1,0 +1,6 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body { @apply bg-white text-gray-900; }
+.btn { @apply inline-flex items-center gap-2 px-4 py-2 rounded border border-gray-300; }
