@@ -30,7 +30,7 @@ export default function Guard({ children }: { children: ReactNode }) {
 
   if (!ok)
     return (
-      <div className="space-y-3 rounded-lg border border-rose-100 bg-rose-50 p-4">
+      <div className="space-y-3 rounded-lg border border-pink-100 bg-pink-50 p-4 text-[#5f3a4d]">
         <p>
           Per giocare devi acquistare il <b>Game Pass</b> (es. 30€).
         </p>

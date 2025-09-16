@@ -12,7 +12,7 @@ export default function TimerBar({ total, left }: TimerBarProps) {
 
   return (
     <div
-      className="relative h-3 w-full overflow-hidden rounded-full bg-white/50 shadow-inner"
+      className="relative h-3 w-full overflow-hidden rounded-full bg-white/60 shadow-inner"
       role="timer"
       aria-label="Secondi rimanenti"
       aria-valuemin={0}
@@ -20,7 +20,7 @@ export default function TimerBar({ total, left }: TimerBarProps) {
       aria-valuenow={safeLeft}
     >
       <div
-        className="h-full rounded-full bg-gradient-to-r from-rose-500 via-fuchsia-500 to-amber-400 transition-[width] duration-500 ease-linear"
+        className="h-full rounded-full bg-gradient-to-r from-[#e0116b] via-[#ff2c93] to-[#ff87c2] transition-[width] duration-500 ease-linear"
         style={{ width: `${pct}%` }}
       />
     </div>

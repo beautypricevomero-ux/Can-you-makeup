@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 
+const LOGO_URL = "https://cdn.shopify.com/s/files/1/0498/2115/5488/files/Logo-2.png?v=1749562237";
+
 export default function Navbar() {
   return (
     <header
@@ -11,13 +13,13 @@ export default function Navbar() {
         paddingTop: "calc(env(safe-area-inset-top, 0px) + 0.75rem)",
       }}
     >
-      <div className="pointer-events-auto flex w-full max-w-5xl items-center justify-between rounded-[28px] border border-white/60 bg-white/80 px-4 py-3 shadow-lg shadow-rose-100/50 backdrop-blur-lg sm:rounded-full sm:px-6">
+      <div className="pointer-events-auto flex w-full max-w-5xl items-center justify-between rounded-[28px] border border-pink-100/80 bg-white/90 px-4 py-3 shadow-lg shadow-pink-100/60 backdrop-blur-lg sm:rounded-full sm:px-6">
         <Link
           href="/"
-          className="flex items-center gap-2 text-sm font-semibold text-gray-900 transition hover:text-rose-500 sm:text-base"
+          className="flex items-center gap-2 text-sm font-semibold text-[#47132c] transition hover:text-[#e0116b] sm:text-base"
         >
           <Image
-            src="/beauty-price-logo.svg"
+            src={LOGO_URL}
             alt="Beauty Price"
             width={168}
             height={48}
@@ -25,26 +27,29 @@ export default function Navbar() {
             priority
           />
         </Link>
-        <nav className="hidden items-center gap-5 text-sm font-medium text-gray-600 sm:flex">
-          <Link href="/" className="transition hover:text-rose-500">
+        <nav className="hidden items-center gap-5 text-sm font-medium text-[#6f3751] sm:flex">
+          <Link href="/" className="transition hover:text-[#e0116b]">
             Home
           </Link>
-          <Link href="/play?tier=t30" className="transition hover:text-rose-500">
+          <Link href="/play?tier=t30" className="transition hover:text-[#e0116b]">
             Gioca
           </Link>
-          <Link href="/settings" className="transition hover:text-rose-500">
+          <Link href="/settings" className="transition hover:text-[#e0116b]">
             Settings
           </Link>
         </nav>
       </div>
-      <nav className="pointer-events-auto flex w-full max-w-sm items-center justify-between rounded-full border border-white/70 bg-white/85 px-4 py-2 text-xs font-semibold text-gray-600 shadow-md shadow-rose-100/40 backdrop-blur sm:hidden">
-        <Link href="/" className="flex flex-1 justify-center rounded-full px-2 py-1 transition hover:text-rose-500">
+      <nav className="pointer-events-auto flex w-full max-w-sm items-center justify-between rounded-full border border-pink-100/80 bg-white/90 px-4 py-2 text-xs font-semibold text-[#6f3751] shadow-md shadow-pink-100/60 backdrop-blur sm:hidden">
+        <Link href="/" className="flex flex-1 justify-center rounded-full px-2 py-1 transition hover:text-[#e0116b]">
           Home
         </Link>
-        <Link href="/play?tier=t30" className="flex flex-1 justify-center rounded-full px-2 py-1 transition hover:text-rose-500">
+        <Link
+          href="/play?tier=t30"
+          className="flex flex-1 justify-center rounded-full px-2 py-1 transition hover:text-[#e0116b]"
+        >
           Gioca
         </Link>
-        <Link href="/settings" className="flex flex-1 justify-center rounded-full px-2 py-1 transition hover:text-rose-500">
+        <Link href="/settings" className="flex flex-1 justify-center rounded-full px-2 py-1 transition hover:text-[#e0116b]">
           Settings
         </Link>
       </nav>

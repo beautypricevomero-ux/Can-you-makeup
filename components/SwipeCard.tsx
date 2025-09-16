@@ -39,9 +39,9 @@ const SECTOR_LABELS: Record<string, string> = {
 };
 
 const SECTOR_ACCENTS: Record<string, string> = {
-  eyes: "bg-rose-500/90 text-white",
-  lips: "bg-fuchsia-500/90 text-white",
-  skin: "bg-amber-400/90 text-white",
+  eyes: "bg-rose-500/95 text-white",
+  lips: "bg-pink-500/95 text-white",
+  skin: "bg-fuchsia-500/95 text-white",
 };
 
 export default function SwipeCard({ product, onLeft, onRight }: SwipeCardProps) {
@@ -125,10 +125,10 @@ export default function SwipeCard({ product, onLeft, onRight }: SwipeCardProps) 
       className="relative mx-auto w-full max-w-[420px] select-none touch-pan-y"
       style={{ minHeight: cardHeight }}
     >
-      <div className="pointer-events-none absolute inset-0 -z-10 rounded-[38px] bg-gradient-to-br from-white/70 via-white/30 to-white/10 blur-2xl" />
+      <div className="pointer-events-none absolute inset-0 -z-10 rounded-[38px] bg-gradient-to-br from-white/75 via-white/35 to-white/15 blur-2xl" />
       <div
         onPointerDown={handlePointerDown}
-        className="relative w-full overflow-hidden rounded-[34px] border border-white/60 bg-white/60 shadow-[0_32px_60px_-30px_rgba(244,63,94,0.55)] backdrop-blur sm:rounded-[38px]"
+        className="relative w-full overflow-hidden rounded-[34px] border border-pink-100/70 bg-white/70 shadow-[0_32px_60px_-30px_rgba(224,17,107,0.5)] backdrop-blur sm:rounded-[38px]"
         style={{
           height: cardHeight,
           transform: `translateX(${dx}px) rotate(${rotation}deg)`,
@@ -156,16 +156,16 @@ export default function SwipeCard({ product, onLeft, onRight }: SwipeCardProps) 
           )}
         </div>
         <div className="pointer-events-none absolute inset-x-0 bottom-0 p-6">
-          <div className="rounded-[28px] bg-white/85 p-5 shadow-lg backdrop-blur">
-            <h3 className="text-2xl font-semibold text-gray-900">{product.title}</h3>
-            {shortDescription && <p className="mt-2 text-sm text-gray-600">{shortDescription}</p>}
+          <div className="rounded-[28px] bg-white/90 p-5 text-left text-[#4a1d33] shadow-lg backdrop-blur">
+            <h3 className="text-2xl font-semibold text-[#2a1020]">{product.title}</h3>
+            {shortDescription && <p className="mt-2 text-sm text-[#5f3a4d]">{shortDescription}</p>}
           </div>
         </div>
         <div className="pointer-events-none absolute inset-0 flex items-center justify-between px-6">
-          <span className="flex h-16 w-16 items-center justify-center rounded-full border-4 border-white/70 bg-white/80 text-3xl text-gray-500 shadow-xl shadow-rose-200/50">
+          <span className="flex h-16 w-16 items-center justify-center rounded-full border-4 border-white/70 bg-white/80 text-3xl text-[#6f3751] shadow-xl shadow-pink-200/50">
             ✕
           </span>
-          <span className="flex h-16 w-16 items-center justify-center rounded-full border-4 border-white/70 bg-white/80 text-3xl text-rose-500 shadow-xl shadow-rose-200/60">
+          <span className="flex h-16 w-16 items-center justify-center rounded-full border-4 border-white/70 bg-white/80 text-3xl text-[#e0116b] shadow-xl shadow-pink-200/60">
             ❤️
           </span>
         </div>

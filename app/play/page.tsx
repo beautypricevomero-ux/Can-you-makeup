@@ -335,7 +335,7 @@ export default function PlayPage({ searchParams }: { searchParams?: { tier?: str
   if (settingsLoading)
     return (
       <Guard>
-        <div className="rounded-[32px] border border-white/60 bg-white/80 p-6 text-center text-sm text-gray-600 shadow-lg shadow-rose-100/50">
+        <div className="rounded-[32px] border border-pink-100/70 bg-white/90 p-6 text-center text-sm text-[#6f3751] shadow-lg shadow-pink-100/60">
           Caricamento impostazioni…
         </div>
       </Guard>
@@ -344,7 +344,7 @@ export default function PlayPage({ searchParams }: { searchParams?: { tier?: str
   if (settingsError)
     return (
       <Guard>
-        <div className="space-y-4 rounded-[32px] border border-rose-200/70 bg-rose-50/80 p-6 text-sm text-rose-700 shadow-lg">
+        <div className="space-y-4 rounded-[32px] border border-pink-200/70 bg-pink-50/90 p-6 text-sm text-[#b3124d] shadow-lg">
           <p>Errore: {settingsError}</p>
           <button className="btn" onClick={reloadSettings} type="button">
             Riprova
@@ -365,15 +365,15 @@ export default function PlayPage({ searchParams }: { searchParams?: { tier?: str
 
   return (
     <Guard>
-      <section className="relative overflow-hidden rounded-[34px] border border-white/60 bg-white/70 p-4 shadow-2xl backdrop-blur-lg sm:rounded-[40px] sm:p-6 md:p-8">
-        <div className="pointer-events-none absolute -left-28 top-10 h-64 w-64 rounded-full bg-rose-200/40 blur-3xl" />
-        <div className="pointer-events-none absolute -right-16 bottom-0 h-72 w-72 rounded-full bg-amber-200/40 blur-3xl" />
+      <section className="relative overflow-hidden rounded-[34px] border border-pink-100/70 bg-white/80 p-4 shadow-2xl backdrop-blur-lg sm:rounded-[40px] sm:p-6 md:p-8">
+        <div className="pointer-events-none absolute -left-28 top-10 h-64 w-64 rounded-full bg-pink-200/40 blur-3xl" />
+        <div className="pointer-events-none absolute -right-16 bottom-0 h-72 w-72 rounded-full bg-fuchsia-200/40 blur-3xl" />
 
         {flash && (
           <div className="pointer-events-none absolute left-1/2 top-4 z-20 -translate-x-1/2 sm:top-6">
             <div
               className={`flex items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold text-white shadow-xl backdrop-blur ${
-                flash.tone === "negative" ? "bg-rose-500/90" : "bg-emerald-500/90"
+                flash.tone === "negative" ? "bg-rose-600/95" : "bg-pink-500/90"
               }`}
               role="status"
               aria-live="assertive"
@@ -387,9 +387,9 @@ export default function PlayPage({ searchParams }: { searchParams?: { tier?: str
         <div className="relative space-y-6 sm:space-y-8">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
             <div className="space-y-2">
-              <p className="text-xs font-semibold uppercase tracking-[0.35em] text-rose-400">Sessione makeup</p>
-              <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">Gioca — Tier {activeTier?.label ?? activeTierId}</h1>
-              <p className="text-sm text-gray-600">
+              <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[#e0116b]">Sessione makeup</p>
+              <h1 className="text-3xl font-bold text-[#2a1020] sm:text-4xl">Gioca — Tier {activeTier?.label ?? activeTierId}</h1>
+              <p className="text-sm text-[#5f3a4d]">
                 Fee {feeLabel}€ · Tempo iniziale {timerTotal}s · Prodotti nel carrello {selected.length}
               </p>
             </div>
@@ -402,10 +402,10 @@ export default function PlayPage({ searchParams }: { searchParams?: { tier?: str
                     type="button"
                     onClick={() => handleTierSelect(tier.id)}
                     aria-pressed={isActive}
-                    className={`rounded-full px-4 py-2 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-400 ${
+                    className={`rounded-full px-4 py-2 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pink-300 ${
                       isActive
-                        ? "bg-gradient-to-r from-rose-500 via-fuchsia-500 to-amber-400 text-white shadow-lg shadow-rose-200/70"
-                        : "border border-white/70 bg-white/70 text-gray-700 shadow-sm hover:-translate-y-0.5 hover:text-rose-500"
+                        ? "bg-gradient-to-r from-[#e0116b] via-[#ff2c93] to-[#ff87c2] text-white shadow-lg shadow-pink-200/70"
+                        : "border border-pink-100/70 bg-white/80 text-[#5f3a4d] shadow-sm hover:-translate-y-0.5 hover:text-[#e0116b]"
                     }`}
                   >
                     Tier {tier.label}
@@ -431,7 +431,7 @@ export default function PlayPage({ searchParams }: { searchParams?: { tier?: str
           </div>
 
           {productsError && (
-            <div className="space-y-4 rounded-[28px] border border-rose-200/70 bg-rose-50/80 p-6 text-sm text-rose-700 shadow-lg">
+            <div className="space-y-4 rounded-[28px] border border-pink-200/70 bg-pink-50/90 p-6 text-sm text-[#b3124d] shadow-lg">
               <p>Errore nel caricamento dei prodotti: {productsError}</p>
               <button className="btn" onClick={reloadProducts} type="button">
                 Riprova
@@ -440,7 +440,7 @@ export default function PlayPage({ searchParams }: { searchParams?: { tier?: str
           )}
 
           {productsLoading && (
-            <div className="rounded-[28px] border border-white/60 bg-white/80 p-6 text-center text-sm text-gray-600 shadow-inner">
+            <div className="rounded-[28px] border border-pink-100/70 bg-white/90 p-6 text-center text-sm text-[#6f3751] shadow-inner">
               Caricamento prodotti…
             </div>
           )}
@@ -451,7 +451,7 @@ export default function PlayPage({ searchParams }: { searchParams?: { tier?: str
               <div className="flex flex-col items-center justify-center gap-6 sm:flex-row sm:gap-8">
                 <div className="flex w-full max-w-[160px] flex-col items-center gap-2 sm:w-auto sm:gap-3">
                   <button
-                    className="flex h-16 w-16 items-center justify-center rounded-full border-4 border-white/70 bg-white/85 text-2xl text-gray-500 shadow-[0_20px_45px_-20px_rgba(15,23,42,0.4)] transition hover:-translate-y-1 sm:h-20 sm:w-20 sm:text-3xl"
+                    className="flex h-16 w-16 items-center justify-center rounded-full border-4 border-white/70 bg-white/90 text-2xl text-[#6f3751] shadow-[0_20px_45px_-20px_rgba(110,40,80,0.35)] transition hover:-translate-y-1 sm:h-20 sm:w-20 sm:text-3xl"
                     onClick={swipeLeft}
                     type="button"
                     aria-label="Scarta prodotto"
@@ -462,21 +462,21 @@ export default function PlayPage({ searchParams }: { searchParams?: { tier?: str
                 </div>
                 <div className="flex w-full max-w-[160px] flex-col items-center gap-2 sm:w-auto sm:gap-3">
                   <button
-                    className="flex h-20 w-20 items-center justify-center rounded-full border-4 border-white/80 bg-gradient-to-br from-rose-500 via-fuchsia-500 to-amber-400 text-3xl text-white shadow-[0_28px_60px_-22px_rgba(244,63,94,0.6)] transition hover:-translate-y-1 sm:h-24 sm:w-24"
+                    className="flex h-20 w-20 items-center justify-center rounded-full border-4 border-white/80 bg-gradient-to-br from-[#e0116b] via-[#ff2c93] to-[#ff87c2] text-3xl text-white shadow-[0_28px_60px_-22px_rgba(224,17,107,0.55)] transition hover:-translate-y-1 sm:h-24 sm:w-24"
                     onClick={swipeRight}
                     type="button"
                     aria-label="Aggiungi al carrello"
                   >
                     ❤️
                   </button>
-                  <span className="text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-rose-500 sm:text-xs">Aggiungi</span>
+                  <span className="text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-[#e0116b] sm:text-xs">Aggiungi</span>
                 </div>
               </div>
               <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-gray-500 sm:justify-between">
                 <span className="font-medium text-gray-600">Prodotti visti: {pickedIds.length}</span>
                 <button
                   onClick={finishNow}
-                  className="font-semibold text-rose-500 underline decoration-dotted decoration-rose-400/70 transition hover:text-rose-600"
+                  className="font-semibold text-[#e0116b] underline decoration-dotted decoration-pink-300/70 transition hover:text-[#b3124d]"
                   type="button"
                 >
                   Termina ora
@@ -486,7 +486,7 @@ export default function PlayPage({ searchParams }: { searchParams?: { tier?: str
           )}
 
           {!productsLoading && !isFinished && !currentProduct && hasAnyProducts && (
-            <div className="space-y-4 rounded-[28px] border border-emerald-200/70 bg-emerald-50/80 p-6 text-sm text-emerald-700 shadow-lg">
+            <div className="space-y-4 rounded-[28px] border border-fuchsia-200/60 bg-fuchsia-50/80 p-6 text-sm text-[#8d2b5a] shadow-lg">
               <p>Hai visto tutti i prodotti disponibili per questo tier.</p>
               <button className="btn" onClick={finishNow} type="button">
                 Vai al riepilogo
@@ -495,12 +495,12 @@ export default function PlayPage({ searchParams }: { searchParams?: { tier?: str
           )}
 
           {!productsLoading && !hasAnyProducts && !productsError && (
-            <div className="space-y-3 rounded-[28px] border border-amber-200/70 bg-amber-50/80 p-6 text-sm text-amber-700 shadow-lg">
+            <div className="space-y-3 rounded-[28px] border border-pink-200/70 bg-pink-50/90 p-6 text-sm text-[#a23a63] shadow-lg">
               <p>Nessun prodotto disponibile per i settori configurati.</p>
               <p>
                 Aggiorna i pesi nella pagina
                 {" "}
-                <Link href="/settings" className="font-semibold text-amber-600 underline">
+                <Link href="/settings" className="font-semibold text-[#e0116b] underline">
                   Settings
                 </Link>
                 {" "}
@@ -510,13 +510,13 @@ export default function PlayPage({ searchParams }: { searchParams?: { tier?: str
           )}
 
           {isFinished && (
-            <div className="space-y-8 rounded-[32px] border border-emerald-200/70 bg-white/85 p-6 text-center shadow-xl backdrop-blur sm:p-8">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-3xl text-emerald-600 shadow-inner">
+            <div className="space-y-8 rounded-[32px] border border-pink-200/70 bg-white/90 p-6 text-center shadow-xl backdrop-blur sm:p-8">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#ffe2f1] text-3xl text-[#e0116b] shadow-inner">
                 {summaryIcon}
               </div>
               <div className="space-y-2">
-                <h2 className="text-2xl font-semibold text-emerald-900">Riepilogo selezione</h2>
-                <p className="text-sm text-emerald-800">{summaryText}</p>
+                <h2 className="text-2xl font-semibold text-[#c31357]">Riepilogo selezione</h2>
+                <p className="text-sm text-[#7a2d4a]">{summaryText}</p>
               </div>
 
               {selected.length > 0 && (
@@ -526,21 +526,21 @@ export default function PlayPage({ searchParams }: { searchParams?: { tier?: str
                     const price = product.variants?.[0]?.price;
                     const sectorLabel = SECTOR_NAMES[product.sector];
                     return (
-                      <li key={product.id} className="flex gap-3 rounded-[24px] border border-white/70 bg-white/90 p-4 shadow-sm backdrop-blur">
+                      <li key={product.id} className="flex gap-3 rounded-[24px] border border-pink-100/70 bg-white/90 p-4 shadow-sm backdrop-blur">
                         <img
                           src={imageUrl}
                           alt={product.images?.[0]?.altText ?? product.title}
                           className="h-20 w-20 rounded-2xl object-cover"
                           loading="lazy"
                         />
-                        <div className="flex flex-1 flex-col justify-between text-left text-sm text-gray-700">
+                        <div className="flex flex-1 flex-col justify-between text-left text-sm text-[#5f3a4d]">
                           <div className="space-y-1">
-                            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-rose-400">{sectorLabel}</p>
-                            <p className="font-semibold text-gray-900">{product.title}</p>
-                            {product.description && <p className="text-xs text-gray-500">{product.description}</p>}
+                            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#e0116b]">{sectorLabel}</p>
+                            <p className="font-semibold text-[#2a1020]">{product.title}</p>
+                            {product.description && <p className="text-xs text-[#73506a]">{product.description}</p>}
                           </div>
                           {price && (
-                            <p className="text-sm font-semibold text-gray-900">
+                            <p className="text-sm font-semibold text-[#2a1020]">
                               {price.amount} {price.currencyCode}
                             </p>
                           )}
@@ -553,7 +553,7 @@ export default function PlayPage({ searchParams }: { searchParams?: { tier?: str
 
               <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
                 <button
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-emerald-500 to-emerald-400 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-200/60 transition hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60"
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#e0116b] via-[#ff2c93] to-[#ff87c2] px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-pink-200/70 transition hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60"
                   onClick={handleCheckout}
                   type="button"
                   disabled={selected.length === 0 || checkoutLoading}
@@ -568,8 +568,8 @@ export default function PlayPage({ searchParams }: { searchParams?: { tier?: str
                 </button>
               </div>
 
-              {checkoutError && <p className="text-sm text-rose-600">{checkoutError}</p>}
-              <p className="text-xs text-emerald-700">Checkout mock: l’URL di destinazione è una demo.</p>
+              {checkoutError && <p className="text-sm text-[#c31357]">{checkoutError}</p>}
+              <p className="text-xs text-[#a23a63]">Checkout mock: l’URL di destinazione è una demo.</p>
             </div>
           )}
         </div>
