@@ -26,6 +26,20 @@ type Product = SwipeCardProduct & {
   sector: "eyes" | "lips" | "skin";
 };
 
+type FlashTone = "negative" | "positive";
+
+type FlashMessage = {
+  id: number;
+  message: string;
+  tone: FlashTone;
+};
+
+const SECTOR_NAMES: Record<Product["sector"], string> = {
+  eyes: "Occhi",
+  lips: "Labbra",
+  skin: "Viso",
+};
+
 export default function PlayPage({ searchParams }: { searchParams?: { tier?: string } }) {
   const tierParam = searchParams?.tier;
   const [settings, setSettings] = useState<Settings | null>(null);
@@ -43,6 +57,7 @@ export default function PlayPage({ searchParams }: { searchParams?: { tier?: str
   const [settingsReloadKey, setSettingsReloadKey] = useState(0);
   const [productsReloadKey, setProductsReloadKey] = useState(0);
   const [manualTierId, setManualTierId] = useState<string | null>(null);
+  const [flash, setFlash] = useState<FlashMessage | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -104,6 +119,12 @@ export default function PlayPage({ searchParams }: { searchParams?: { tier?: str
     setManualTierId((current) => (current && validIds.has(current) ? current : null));
   }, [settings]);
 
+  useEffect(() => {
+    if (!flash) return;
+    const id = window.setTimeout(() => setFlash(null), 2400);
+    return () => window.clearTimeout(id);
+  }, [flash]);
+
   const activeTierId = useMemo(() => {
     if (!settings) return tierParam ?? "t30";
     const validIds = new Set(settings.tiers.map((tier) => tier.id));
@@ -122,6 +143,7 @@ export default function PlayPage({ searchParams }: { searchParams?: { tier?: str
       setIsFinished(false);
       setCheckoutLoading(false);
       setCheckoutError(null);
+      setFlash(null);
       return;
     }
 
@@ -131,6 +153,7 @@ export default function PlayPage({ searchParams }: { searchParams?: { tier?: str
     setIsFinished(false);
     setCheckoutLoading(false);
     setCheckoutError(null);
+    setFlash(null);
   }, [activeTierId, activeTier?.secs, productsReloadKey, settingsReloadKey]);
 
   const sectorsForTier = useMemo(() => {
@@ -223,20 +246,45 @@ export default function PlayPage({ searchParams }: { searchParams?: { tier?: str
   const reloadSettings = () => setSettingsReloadKey((key) => key + 1);
   const reloadProducts = () => setProductsReloadKey((key) => key + 1);
 
+  function showFlash(message: string, tone: FlashTone) {
+    setFlash({ id: Date.now(), message, tone });
+  }
+
+  function applyPenalty(amount: number, message: string, tone: FlashTone) {
+    setSecondsLeft((prev) => Math.max(0, prev - amount));
+    showFlash(message, tone);
+  }
+
   function swipeLeft() {
     if (!currentProduct || isFinished) return;
-    setPickedIds((prev) => (prev.includes(currentProduct.id) ? prev : [...prev, currentProduct.id]));
+    setPickedIds((prev) => {
+      if (prev.includes(currentProduct.id)) return prev;
+      applyPenalty(10, "-10s! Scartando un prodotto perdi tempo prezioso.", "negative");
+      return [...prev, currentProduct.id];
+    });
   }
 
   function swipeRight() {
     if (!currentProduct || isFinished) return;
-    setSelected((prev) => (prev.some((product) => product.id === currentProduct.id) ? prev : [...prev, currentProduct]));
-    setPickedIds((prev) => (prev.includes(currentProduct.id) ? prev : [...prev, currentProduct.id]));
+    let added = false;
+    setSelected((prev) => {
+      if (prev.some((product) => product.id === currentProduct.id)) return prev;
+      added = true;
+      return [...prev, currentProduct];
+    });
+    setPickedIds((prev) => {
+      if (prev.includes(currentProduct.id)) return prev;
+      return [...prev, currentProduct.id];
+    });
+    if (added) {
+      applyPenalty(30, "-30s! Hai aggiunto un prodotto al carrello: il timer accelera.", "positive");
+    }
   }
 
   function finishNow() {
     setSecondsLeft(0);
     setIsFinished(true);
+    setFlash(null);
   }
 
   function resetGame() {
@@ -247,6 +295,7 @@ export default function PlayPage({ searchParams }: { searchParams?: { tier?: str
     setIsFinished(false);
     setCheckoutLoading(false);
     setCheckoutError(null);
+    setFlash(null);
   }
 
   function handleTierSelect(id: string) {
@@ -283,181 +332,247 @@ export default function PlayPage({ searchParams }: { searchParams?: { tier?: str
     }
   }
 
-  if (settingsLoading) return <p>Caricamento impostazioni…</p>;
+  if (settingsLoading)
+    return (
+      <Guard>
+        <div className="rounded-[32px] border border-white/60 bg-white/80 p-6 text-center text-sm text-gray-600 shadow-lg shadow-rose-100/50">
+          Caricamento impostazioni…
+        </div>
+      </Guard>
+    );
+
   if (settingsError)
     return (
-      <div className="space-y-3 rounded-2xl border border-red-200 bg-red-50 p-6 text-sm text-red-700">
-        <p>Errore: {settingsError}</p>
-        <button className="btn" onClick={reloadSettings} type="button">
-          Riprova
-        </button>
-      </div>
+      <Guard>
+        <div className="space-y-4 rounded-[32px] border border-rose-200/70 bg-rose-50/80 p-6 text-sm text-rose-700 shadow-lg">
+          <p>Errore: {settingsError}</p>
+          <button className="btn" onClick={reloadSettings} type="button">
+            Riprova
+          </button>
+        </div>
+      </Guard>
     );
+
   if (!settings) return null;
 
   const timerTotal = activeTier?.secs ?? 0;
   const feeLabel = activeTier ? activeTier.fee.toFixed(2) : "0.00";
+  const summaryIcon = selected.length > 0 ? "💖" : "⌛";
+  const summaryText =
+    selected.length > 0
+      ? `Hai scelto ${selected.length} prodotto${selected.length === 1 ? "" : "i"} per un totale stimato di ${formattedTotal} €.`
+      : "Tempo scaduto: non hai selezionato prodotti durante questa sessione.";
 
   return (
     <Guard>
-      <section className="space-y-8">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div className="space-y-1">
-            <h1 className="text-2xl font-semibold text-gray-900">Gioca — Tier {activeTier?.label ?? activeTierId}</h1>
-            <p className="text-sm text-gray-600">
-              Fee {feeLabel}€ · Tempo limite {timerTotal}s · Prodotti nel carrello: {selected.length}
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {settings.tiers.map((tier) => {
-              const isActive = tier.id === activeTierId;
-              return (
-                <button
-                  key={tier.id}
-                  type="button"
-                  onClick={() => handleTierSelect(tier.id)}
-                  className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-                    isActive
-                      ? "bg-gray-900 text-white shadow"
-                      : "border border-gray-300 bg-white text-gray-700 hover:border-gray-400"
-                  }`}
-                >
-                  Tier {tier.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
+      <section className="relative overflow-hidden rounded-[40px] border border-white/60 bg-white/70 p-6 shadow-2xl backdrop-blur-lg md:p-10">
+        <div className="pointer-events-none absolute -left-28 top-10 h-64 w-64 rounded-full bg-rose-200/40 blur-3xl" />
+        <div className="pointer-events-none absolute -right-16 bottom-0 h-72 w-72 rounded-full bg-amber-200/40 blur-3xl" />
 
-        <div className="space-y-2">
-          <TimerBar total={timerTotal} left={secondsLeft} />
-          <div className="flex flex-wrap items-center justify-between text-sm text-gray-600">
-            <span>
-              Tempo rimasto: <span className="font-semibold text-gray-900">{secondsLeft}s</span>
-            </span>
-            <span>
-              Selezionati: <span className="font-semibold text-gray-900">{selected.length}</span>
-            </span>
-          </div>
-        </div>
-
-        {productsError && (
-          <div className="space-y-3 rounded-2xl border border-red-200 bg-red-50 p-6 text-sm text-red-700">
-            <p>Errore nel caricamento dei prodotti: {productsError}</p>
-            <button className="btn" onClick={reloadProducts} type="button">
-              Riprova
-            </button>
-          </div>
-        )}
-
-        {productsLoading && <p>Caricamento prodotti…</p>}
-
-        {!productsLoading && !isFinished && currentProduct && (
-          <div className="space-y-5">
-            <SwipeCard product={currentProduct} onLeft={swipeLeft} onRight={swipeRight} />
-            <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <button className="btn w-full justify-center sm:w-auto" onClick={swipeLeft} type="button">
-                👎 Scarta
-              </button>
-              <button className="btn w-full justify-center sm:w-auto" onClick={swipeRight} type="button">
-                👍 Aggiungi al carrello
-              </button>
-            </div>
-            <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-gray-500">
-              <span>Prodotti visti: {pickedIds.length}</span>
-              <button onClick={finishNow} className="underline" type="button">
-                Termina ora
-              </button>
+        {flash && (
+          <div className="pointer-events-none absolute left-1/2 top-6 z-20 -translate-x-1/2">
+            <div
+              className={`flex items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold text-white shadow-xl backdrop-blur ${
+                flash.tone === "negative" ? "bg-rose-500/90" : "bg-emerald-500/90"
+              }`}
+              role="status"
+              aria-live="assertive"
+            >
+              <span aria-hidden>{flash.tone === "negative" ? "⚡" : "💖"}</span>
+              <span>{flash.message}</span>
             </div>
           </div>
         )}
 
-        {!productsLoading && !isFinished && !currentProduct && hasAnyProducts && (
-          <div className="space-y-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-6 text-sm text-emerald-800">
-            <p>Hai visto tutti i prodotti disponibili per questo tier.</p>
-            <button className="btn" onClick={finishNow} type="button">
-              Vai al riepilogo
-            </button>
-          </div>
-        )}
-
-        {!productsLoading && !hasAnyProducts && !productsError && (
-          <div className="space-y-2 rounded-2xl border border-amber-200 bg-amber-50 p-6 text-sm text-amber-800">
-            <p>Nessun prodotto disponibile per i settori configurati.</p>
-            <p>
-              Aggiorna i pesi nella pagina {""}
-              <Link href="/settings" className="font-medium underline">
-                Settings
-              </Link>{" "}
-              e riprova.
-            </p>
-          </div>
-        )}
-
-        {isFinished && (
-          <div className="space-y-5 rounded-3xl border border-emerald-200 bg-emerald-50 p-6">
-            <div className="space-y-1">
-              <h2 className="text-xl font-semibold text-emerald-900">Riepilogo selezione</h2>
-              <p className="text-sm text-emerald-800">
-                {selected.length > 0
-                  ? `Hai scelto ${selected.length} prodotto${selected.length === 1 ? "" : "i"} per un totale stimato di ${formattedTotal} €.`
-                  : "Tempo scaduto: non hai selezionato prodotti durante questa sessione."}
+        <div className="relative space-y-8">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+            <div className="space-y-2">
+              <p className="text-xs font-semibold uppercase tracking-[0.35em] text-rose-400">Sessione makeup</p>
+              <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">Gioca — Tier {activeTier?.label ?? activeTierId}</h1>
+              <p className="text-sm text-gray-600">
+                Fee {feeLabel}€ · Tempo iniziale {timerTotal}s · Prodotti nel carrello {selected.length}
               </p>
             </div>
+            <div className="flex flex-wrap items-center gap-3">
+              {settings.tiers.map((tier) => {
+                const isActive = tier.id === activeTierId;
+                return (
+                  <button
+                    key={tier.id}
+                    type="button"
+                    onClick={() => handleTierSelect(tier.id)}
+                    aria-pressed={isActive}
+                    className={`rounded-full px-4 py-2 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-400 ${
+                      isActive
+                        ? "bg-gradient-to-r from-rose-500 via-fuchsia-500 to-amber-400 text-white shadow-lg shadow-rose-200/70"
+                        : "border border-white/70 bg-white/70 text-gray-700 shadow-sm hover:-translate-y-0.5 hover:text-rose-500"
+                    }`}
+                  >
+                    Tier {tier.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
-            {selected.length > 0 && (
-              <ul className="grid gap-4 sm:grid-cols-2">
-                {selected.map((product) => {
-                  const imageUrl = product.images?.[0]?.url ?? "https://picsum.photos/seed/placeholder/800/600";
-                  const price = product.variants?.[0]?.price;
-                  return (
-                    <li key={product.id} className="flex gap-3 rounded-2xl bg-white/90 p-3 shadow-sm backdrop-blur">
-                      <img
-                        src={imageUrl}
-                        alt={product.images?.[0]?.altText ?? product.title}
-                        className="h-20 w-20 rounded-xl object-cover"
-                        loading="lazy"
-                      />
-                      <div className="flex flex-1 flex-col justify-between text-sm text-gray-700">
-                        <div className="space-y-1">
-                          <p className="font-semibold text-gray-900">{product.title}</p>
-                          {product.description && (
-                            <p className="text-xs text-gray-500">{product.description}</p>
-                          )}
-                        </div>
-                        {price && (
-                          <p className="text-sm font-semibold text-gray-900">
-                            {price.amount} {price.currencyCode}
-                          </p>
-                        )}
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
+          <div className="space-y-3">
+            <TimerBar total={timerTotal} left={secondsLeft} />
+            <div className="flex flex-wrap items-center justify-between gap-3 text-xs font-medium text-gray-500 sm:text-sm">
+              <span className="text-gray-600">
+                Tempo rimasto: <span className="font-semibold text-gray-900">{secondsLeft}s</span>
+              </span>
+              <span className="text-gray-600">
+                Prodotti in carrello: <span className="font-semibold text-gray-900">{selected.length}</span>
+              </span>
+              <span className="text-gray-600">
+                Prodotti visti: <span className="font-semibold text-gray-900">{pickedIds.length}</span>
+              </span>
+            </div>
+          </div>
 
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <button
-                className="btn w-full justify-center sm:w-auto"
-                onClick={handleCheckout}
-                type="button"
-                disabled={selected.length === 0 || checkoutLoading}
-              >
-                {checkoutLoading ? "Apro il checkout…" : "Vai al checkout"}
-              </button>
-              <button className="btn w-full justify-center sm:w-auto" onClick={resetGame} type="button">
-                🔄 Ricomincia il tier
-              </button>
-              <button className="btn w-full justify-center sm:w-auto" onClick={reloadProducts} type="button">
-                ♻️ Ricarica prodotti
+          {productsError && (
+            <div className="space-y-4 rounded-[28px] border border-rose-200/70 bg-rose-50/80 p-6 text-sm text-rose-700 shadow-lg">
+              <p>Errore nel caricamento dei prodotti: {productsError}</p>
+              <button className="btn" onClick={reloadProducts} type="button">
+                Riprova
               </button>
             </div>
+          )}
 
-            {checkoutError && <p className="text-sm text-red-600">{checkoutError}</p>}
-            <p className="text-xs text-emerald-700">Checkout mock: l’URL di destinazione è una demo.</p>
-          </div>
-        )}
+          {productsLoading && (
+            <div className="rounded-[28px] border border-white/60 bg-white/80 p-6 text-center text-sm text-gray-600 shadow-inner">
+              Caricamento prodotti…
+            </div>
+          )}
+
+          {!productsLoading && !isFinished && currentProduct && (
+            <div className="space-y-8">
+              <SwipeCard product={currentProduct} onLeft={swipeLeft} onRight={swipeRight} />
+              <div className="flex flex-col items-center justify-center gap-8 sm:flex-row">
+                <div className="flex flex-col items-center gap-3">
+                  <button
+                    className="flex h-20 w-20 items-center justify-center rounded-full border-4 border-white/70 bg-white/80 text-3xl text-gray-500 shadow-[0_25px_50px_-20px_rgba(15,23,42,0.35)] transition hover:-translate-y-1"
+                    onClick={swipeLeft}
+                    type="button"
+                    aria-label="Scarta prodotto"
+                  >
+                    ✕
+                  </button>
+                  <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gray-500">Scarta</span>
+                </div>
+                <div className="flex flex-col items-center gap-3">
+                  <button
+                    className="flex h-24 w-24 items-center justify-center rounded-full border-4 border-white/80 bg-gradient-to-br from-rose-500 via-fuchsia-500 to-amber-400 text-3xl text-white shadow-[0_35px_65px_-20px_rgba(244,63,94,0.6)] transition hover:-translate-y-1"
+                    onClick={swipeRight}
+                    type="button"
+                    aria-label="Aggiungi al carrello"
+                  >
+                    ❤️
+                  </button>
+                  <span className="text-xs font-semibold uppercase tracking-[0.3em] text-rose-500">Aggiungi</span>
+                </div>
+              </div>
+              <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-gray-500 sm:justify-between">
+                <span className="font-medium text-gray-600">Prodotti visti: {pickedIds.length}</span>
+                <button
+                  onClick={finishNow}
+                  className="font-semibold text-rose-500 underline decoration-dotted decoration-rose-400/70 transition hover:text-rose-600"
+                  type="button"
+                >
+                  Termina ora
+                </button>
+              </div>
+            </div>
+          )}
+
+          {!productsLoading && !isFinished && !currentProduct && hasAnyProducts && (
+            <div className="space-y-4 rounded-[28px] border border-emerald-200/70 bg-emerald-50/80 p-6 text-sm text-emerald-700 shadow-lg">
+              <p>Hai visto tutti i prodotti disponibili per questo tier.</p>
+              <button className="btn" onClick={finishNow} type="button">
+                Vai al riepilogo
+              </button>
+            </div>
+          )}
+
+          {!productsLoading && !hasAnyProducts && !productsError && (
+            <div className="space-y-3 rounded-[28px] border border-amber-200/70 bg-amber-50/80 p-6 text-sm text-amber-700 shadow-lg">
+              <p>Nessun prodotto disponibile per i settori configurati.</p>
+              <p>
+                Aggiorna i pesi nella pagina
+                {" "}
+                <Link href="/settings" className="font-semibold text-amber-600 underline">
+                  Settings
+                </Link>
+                {" "}
+                e riprova.
+              </p>
+            </div>
+          )}
+
+          {isFinished && (
+            <div className="space-y-8 rounded-[32px] border border-emerald-200/70 bg-white/85 p-8 text-center shadow-xl backdrop-blur">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-3xl text-emerald-600 shadow-inner">
+                {summaryIcon}
+              </div>
+              <div className="space-y-2">
+                <h2 className="text-2xl font-semibold text-emerald-900">Riepilogo selezione</h2>
+                <p className="text-sm text-emerald-800">{summaryText}</p>
+              </div>
+
+              {selected.length > 0 && (
+                <ul className="grid gap-4 sm:grid-cols-2">
+                  {selected.map((product) => {
+                    const imageUrl = product.images?.[0]?.url ?? "https://picsum.photos/seed/placeholder/800/600";
+                    const price = product.variants?.[0]?.price;
+                    const sectorLabel = SECTOR_NAMES[product.sector];
+                    return (
+                      <li key={product.id} className="flex gap-3 rounded-[24px] border border-white/70 bg-white/90 p-4 shadow-sm backdrop-blur">
+                        <img
+                          src={imageUrl}
+                          alt={product.images?.[0]?.altText ?? product.title}
+                          className="h-20 w-20 rounded-2xl object-cover"
+                          loading="lazy"
+                        />
+                        <div className="flex flex-1 flex-col justify-between text-left text-sm text-gray-700">
+                          <div className="space-y-1">
+                            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-rose-400">{sectorLabel}</p>
+                            <p className="font-semibold text-gray-900">{product.title}</p>
+                            {product.description && <p className="text-xs text-gray-500">{product.description}</p>}
+                          </div>
+                          {price && (
+                            <p className="text-sm font-semibold text-gray-900">
+                              {price.amount} {price.currencyCode}
+                            </p>
+                          )}
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+
+              <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+                <button
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-emerald-500 to-emerald-400 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-200/60 transition hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60"
+                  onClick={handleCheckout}
+                  type="button"
+                  disabled={selected.length === 0 || checkoutLoading}
+                >
+                  {checkoutLoading ? "Apro il checkout…" : "Vai al checkout"}
+                </button>
+                <button className="btn justify-center" onClick={resetGame} type="button">
+                  🔄 Ricomincia il tier
+                </button>
+                <button className="btn justify-center" onClick={reloadProducts} type="button">
+                  ♻️ Ricarica prodotti
+                </button>
+              </div>
+
+              {checkoutError && <p className="text-sm text-rose-600">{checkoutError}</p>}
+              <p className="text-xs text-emerald-700">Checkout mock: l’URL di destinazione è una demo.</p>
+            </div>
+          )}
+        </div>
       </section>
     </Guard>
   );

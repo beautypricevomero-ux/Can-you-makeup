@@ -12,14 +12,17 @@ export default function TimerBar({ total, left }: TimerBarProps) {
 
   return (
     <div
-      className="relative h-2 w-full overflow-hidden rounded bg-gray-200"
+      className="relative h-3 w-full overflow-hidden rounded-full bg-white/50 shadow-inner"
       role="timer"
       aria-label="Secondi rimanenti"
       aria-valuemin={0}
       aria-valuemax={safeTotal}
       aria-valuenow={safeLeft}
     >
-      <div className="h-full bg-gray-900 transition-[width] duration-500 ease-linear" style={{ width: `${pct}%` }} />
+      <div
+        className="h-full rounded-full bg-gradient-to-r from-rose-500 via-fuchsia-500 to-amber-400 transition-[width] duration-500 ease-linear"
+        style={{ width: `${pct}%` }}
+      />
     </div>
   );
 }
