@@ -1,0 +1,11 @@
+node_modules/
+.next/
+out/
+dist/
+public/sitemap*.xml
+public/robots.txt
+*.log
+.env*
+.DS_Store
+.idea/
+.vscode/

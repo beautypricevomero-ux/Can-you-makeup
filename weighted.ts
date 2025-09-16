@@ -6,10 +6,21 @@ export type SectorConfig = {
 };
 
 export function drawSectorId(sectors: SectorConfig[]) {
-  const total = sectors.reduce((s, x)=>s + x.weight, 0);
-  let r = Math.random() * total;
-  for (const s of sectors) {
-    if ((r -= s.weight) <= 0) return s.id;
+  if (sectors.length === 0) return "";
+
+  const normalized = sectors.map((sector) => ({
+    ...sector,
+    weight: Number.isFinite(sector.weight) && sector.weight > 0 ? sector.weight : 0,
+  }));
+
+  const total = normalized.reduce((sum, sector) => sum + sector.weight, 0);
+  if (total <= 0) return normalized[0].id;
+
+  let remaining = Math.random() * total;
+  for (const sector of normalized) {
+    remaining -= sector.weight;
+    if (remaining <= 0) return sector.id;
   }
-  return sectors[sectors.length - 1].id;
+
+  return normalized[normalized.length - 1].id;
 }
