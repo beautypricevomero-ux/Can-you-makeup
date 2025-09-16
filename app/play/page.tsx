@@ -365,12 +365,12 @@ export default function PlayPage({ searchParams }: { searchParams?: { tier?: str
 
   return (
     <Guard>
-      <section className="relative overflow-hidden rounded-[40px] border border-white/60 bg-white/70 p-6 shadow-2xl backdrop-blur-lg md:p-10">
+      <section className="relative overflow-hidden rounded-[34px] border border-white/60 bg-white/70 p-4 shadow-2xl backdrop-blur-lg sm:rounded-[40px] sm:p-6 md:p-8">
         <div className="pointer-events-none absolute -left-28 top-10 h-64 w-64 rounded-full bg-rose-200/40 blur-3xl" />
         <div className="pointer-events-none absolute -right-16 bottom-0 h-72 w-72 rounded-full bg-amber-200/40 blur-3xl" />
 
         {flash && (
-          <div className="pointer-events-none absolute left-1/2 top-6 z-20 -translate-x-1/2">
+          <div className="pointer-events-none absolute left-1/2 top-4 z-20 -translate-x-1/2 sm:top-6">
             <div
               className={`flex items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold text-white shadow-xl backdrop-blur ${
                 flash.tone === "negative" ? "bg-rose-500/90" : "bg-emerald-500/90"
@@ -384,8 +384,8 @@ export default function PlayPage({ searchParams }: { searchParams?: { tier?: str
           </div>
         )}
 
-        <div className="relative space-y-8">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+        <div className="relative space-y-6 sm:space-y-8">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
             <div className="space-y-2">
               <p className="text-xs font-semibold uppercase tracking-[0.35em] text-rose-400">Sessione makeup</p>
               <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">Gioca — Tier {activeTier?.label ?? activeTierId}</h1>
@@ -393,7 +393,7 @@ export default function PlayPage({ searchParams }: { searchParams?: { tier?: str
                 Fee {feeLabel}€ · Tempo iniziale {timerTotal}s · Prodotti nel carrello {selected.length}
               </p>
             </div>
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               {settings.tiers.map((tier) => {
                 const isActive = tier.id === activeTierId;
                 return (
@@ -417,7 +417,7 @@ export default function PlayPage({ searchParams }: { searchParams?: { tier?: str
 
           <div className="space-y-3">
             <TimerBar total={timerTotal} left={secondsLeft} />
-            <div className="flex flex-wrap items-center justify-between gap-3 text-xs font-medium text-gray-500 sm:text-sm">
+            <div className="grid grid-cols-2 gap-3 text-[0.7rem] font-medium text-gray-500 sm:flex sm:flex-wrap sm:items-center sm:justify-between sm:text-xs md:text-sm">
               <span className="text-gray-600">
                 Tempo rimasto: <span className="font-semibold text-gray-900">{secondsLeft}s</span>
               </span>
@@ -446,30 +446,30 @@ export default function PlayPage({ searchParams }: { searchParams?: { tier?: str
           )}
 
           {!productsLoading && !isFinished && currentProduct && (
-            <div className="space-y-8">
+            <div className="space-y-6 sm:space-y-8">
               <SwipeCard product={currentProduct} onLeft={swipeLeft} onRight={swipeRight} />
-              <div className="flex flex-col items-center justify-center gap-8 sm:flex-row">
-                <div className="flex flex-col items-center gap-3">
+              <div className="flex flex-col items-center justify-center gap-6 sm:flex-row sm:gap-8">
+                <div className="flex w-full max-w-[160px] flex-col items-center gap-2 sm:w-auto sm:gap-3">
                   <button
-                    className="flex h-20 w-20 items-center justify-center rounded-full border-4 border-white/70 bg-white/80 text-3xl text-gray-500 shadow-[0_25px_50px_-20px_rgba(15,23,42,0.35)] transition hover:-translate-y-1"
+                    className="flex h-16 w-16 items-center justify-center rounded-full border-4 border-white/70 bg-white/85 text-2xl text-gray-500 shadow-[0_20px_45px_-20px_rgba(15,23,42,0.4)] transition hover:-translate-y-1 sm:h-20 sm:w-20 sm:text-3xl"
                     onClick={swipeLeft}
                     type="button"
                     aria-label="Scarta prodotto"
                   >
                     ✕
                   </button>
-                  <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gray-500">Scarta</span>
+                  <span className="text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-gray-500 sm:text-xs">Scarta</span>
                 </div>
-                <div className="flex flex-col items-center gap-3">
+                <div className="flex w-full max-w-[160px] flex-col items-center gap-2 sm:w-auto sm:gap-3">
                   <button
-                    className="flex h-24 w-24 items-center justify-center rounded-full border-4 border-white/80 bg-gradient-to-br from-rose-500 via-fuchsia-500 to-amber-400 text-3xl text-white shadow-[0_35px_65px_-20px_rgba(244,63,94,0.6)] transition hover:-translate-y-1"
+                    className="flex h-20 w-20 items-center justify-center rounded-full border-4 border-white/80 bg-gradient-to-br from-rose-500 via-fuchsia-500 to-amber-400 text-3xl text-white shadow-[0_28px_60px_-22px_rgba(244,63,94,0.6)] transition hover:-translate-y-1 sm:h-24 sm:w-24"
                     onClick={swipeRight}
                     type="button"
                     aria-label="Aggiungi al carrello"
                   >
                     ❤️
                   </button>
-                  <span className="text-xs font-semibold uppercase tracking-[0.3em] text-rose-500">Aggiungi</span>
+                  <span className="text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-rose-500 sm:text-xs">Aggiungi</span>
                 </div>
               </div>
               <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-gray-500 sm:justify-between">
@@ -510,7 +510,7 @@ export default function PlayPage({ searchParams }: { searchParams?: { tier?: str
           )}
 
           {isFinished && (
-            <div className="space-y-8 rounded-[32px] border border-emerald-200/70 bg-white/85 p-8 text-center shadow-xl backdrop-blur">
+            <div className="space-y-8 rounded-[32px] border border-emerald-200/70 bg-white/85 p-6 text-center shadow-xl backdrop-blur sm:p-8">
               <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-3xl text-emerald-600 shadow-inner">
                 {summaryIcon}
               </div>
@@ -520,7 +520,7 @@ export default function PlayPage({ searchParams }: { searchParams?: { tier?: str
               </div>
 
               {selected.length > 0 && (
-                <ul className="grid gap-4 sm:grid-cols-2">
+                <ul className="grid max-h-[60vh] gap-4 overflow-y-auto pr-1 sm:max-h-none sm:grid-cols-2">
                   {selected.map((product) => {
                     const imageUrl = product.images?.[0]?.url ?? "https://picsum.photos/seed/placeholder/800/600";
                     const price = product.variants?.[0]?.price;

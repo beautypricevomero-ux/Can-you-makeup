@@ -103,94 +103,100 @@ export default function SettingsPage() {
     }
   }
 
-  if (loading) return <p>Caricamento impostazioni…</p>;
+  if (loading)
+    return (
+      <section className="relative overflow-hidden rounded-[28px] border border-white/60 bg-white/75 p-5 text-sm text-gray-600 shadow-lg backdrop-blur-sm sm:p-6">
+        Caricamento impostazioni…
+      </section>
+    );
   if (error && !settings)
     return (
-      <div className="space-y-3 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+      <section className="space-y-3 rounded-[28px] border border-rose-200/70 bg-rose-50/80 p-5 text-sm text-rose-700 shadow-lg sm:p-6">
         <p>Errore: {error}</p>
-        <button className="btn" onClick={reload}>
+        <button className="btn" onClick={reload} type="button">
           Riprova
         </button>
-      </div>
+      </section>
     );
 
   if (!settings) return null;
 
   return (
-    <section className="space-y-6">
+    <section className="relative overflow-hidden rounded-[34px] border border-white/60 bg-white/75 p-4 shadow-2xl backdrop-blur-sm sm:rounded-[40px] sm:p-6 md:p-8">
       <header className="space-y-2">
-        <h1 className="text-2xl font-semibold">Impostazioni di gioco</h1>
+        <h1 className="text-2xl font-semibold text-gray-900">Impostazioni di gioco</h1>
         <p className="text-sm text-gray-600">
-          Modifica nomi dei settori, pesi percentuali e collegamenti alle collection Shopify. I cambiamenti sono salvati in
-          memoria per la demo.
+          Modifica nomi dei settori, pesi percentuali e collegamenti alle collection Shopify. I cambiamenti sono salvati in memoria per la demo.
         </p>
       </header>
 
-      {settings.tiers.map((tier) => (
-        <div key={tier.id} className="space-y-4 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900">Tier {tier.label}</h2>
-              <p className="text-sm text-gray-500">
-                Fee {tier.fee.toFixed(2)}€ · Tempo limite {tier.secs}s
-              </p>
-            </div>
-            <p className="text-sm font-medium text-gray-600">Peso totale: {totals[tier.id] ?? 0}</p>
-          </div>
-
-          <div className="space-y-4">
-            {settings.sectorsByTier[tier.id]?.map((sector, index) => (
-              <div key={sector.id} className="grid gap-3 rounded-xl border border-gray-100 p-4 sm:grid-cols-3">
-                <label className="flex flex-col gap-1 text-sm text-gray-600">
-                  Nome settore
-                  <input
-                    className="rounded border border-gray-300 px-3 py-2 text-base text-gray-900"
-                    value={sector.label}
-                    onChange={(event) => updateSector(tier.id, index, { label: event.target.value })}
-                  />
-                </label>
-                <label className="flex flex-col gap-1 text-sm text-gray-600">
-                  Peso (%)
-                  <input
-                    type="number"
-                    min={0}
-                    className="rounded border border-gray-300 px-3 py-2 text-base text-gray-900"
-                    value={sector.weight}
-                    onChange={(event) =>
-                      updateSector(tier.id, index, { weight: Math.max(0, Number(event.target.value) || 0) })
-                    }
-                  />
-                </label>
-                <label className="flex flex-col gap-1 text-sm text-gray-600 sm:col-span-1">
-                  Collection handles
-                  <input
-                    className="rounded border border-gray-300 px-3 py-2 text-base text-gray-900"
-                    placeholder="collection-a, collection-b"
-                    value={sector.handles.join(", ")}
-                    onChange={(event) =>
-                      updateSector(tier.id, index, {
-                        handles: event.target.value
-                          .split(",")
-                          .map((handle) => handle.trim())
-                          .filter(Boolean),
-                      })
-                    }
-                  />
-                </label>
+      <div className="mt-6 space-y-6">
+        {settings.tiers.map((tier) => (
+          <div key={tier.id} className="space-y-4 rounded-2xl border border-gray-200/80 bg-white/90 p-5 shadow-sm sm:p-6">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900">Tier {tier.label}</h2>
+                <p className="text-sm text-gray-500">
+                  Fee {tier.fee.toFixed(2)}€ · Tempo limite {tier.secs}s
+                </p>
               </div>
-            ))}
-          </div>
-        </div>
-      ))}
+              <p className="text-sm font-medium text-gray-600">Peso totale: {totals[tier.id] ?? 0}</p>
+            </div>
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <button className="btn w-full justify-center sm:w-auto" onClick={saveSettings} disabled={saving}>
+            <div className="space-y-4">
+              {settings.sectorsByTier[tier.id]?.map((sector, index) => (
+                <div key={sector.id} className="grid gap-3 rounded-xl border border-gray-100 bg-white/80 p-4 sm:grid-cols-3">
+                  <label className="flex flex-col gap-1 text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">
+                    Nome settore
+                    <input
+                      className="rounded-lg border border-gray-300 px-3 py-2 text-base text-gray-900 shadow-sm"
+                      value={sector.label}
+                      onChange={(event) => updateSector(tier.id, index, { label: event.target.value })}
+                    />
+                  </label>
+                  <label className="flex flex-col gap-1 text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">
+                    Peso (%)
+                    <input
+                      type="number"
+                      min={0}
+                      className="rounded-lg border border-gray-300 px-3 py-2 text-base text-gray-900 shadow-sm"
+                      value={sector.weight}
+                      onChange={(event) =>
+                        updateSector(tier.id, index, { weight: Math.max(0, Number(event.target.value) || 0) })
+                      }
+                    />
+                  </label>
+                  <label className="flex flex-col gap-1 text-xs font-semibold uppercase tracking-[0.2em] text-gray-500 sm:col-span-1">
+                    Collection handles
+                    <input
+                      className="rounded-lg border border-gray-300 px-3 py-2 text-base text-gray-900 shadow-sm"
+                      placeholder="collection-a, collection-b"
+                      value={sector.handles.join(", ")}
+                      onChange={(event) =>
+                        updateSector(tier.id, index, {
+                          handles: event.target.value
+                            .split(",")
+                            .map((handle) => handle.trim())
+                            .filter(Boolean),
+                        })
+                      }
+                    />
+                  </label>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
+        <button className="btn w-full justify-center sm:w-auto" onClick={saveSettings} disabled={saving} type="button">
           {saving ? "Salvataggio…" : "Salva impostazioni"}
         </button>
         {saved && <span className="text-sm text-green-600">Impostazioni salvate ✔️</span>}
         {error && settings && <span className="text-sm text-red-600">{error}</span>}
       </div>
-      <p className="text-xs text-gray-500">
+      <p className="mt-2 text-xs text-gray-500">
         Nota: per un’integrazione reale salva questi dati in Shopify (metafields o app) e sostituisci le API mock.
       </p>
     </section>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type ProductImage = {
   url: string;
@@ -46,7 +46,26 @@ const SECTOR_ACCENTS: Record<string, string> = {
 
 export default function SwipeCard({ product, onLeft, onRight }: SwipeCardProps) {
   const [dx, setDx] = useState(0);
+  const [cardHeight, setCardHeight] = useState(() => 420);
   const dragState = useRef({ startX: 0, dx: 0, active: false });
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const updateHeight = () => {
+      const viewportHeight = window.innerHeight || 0;
+      const computed = Math.min(viewportHeight * 0.72, 480);
+      setCardHeight(Math.max(360, Math.round(computed)));
+    };
+
+    updateHeight();
+    window.addEventListener("resize", updateHeight);
+    window.addEventListener("orientationchange", updateHeight);
+    return () => {
+      window.removeEventListener("resize", updateHeight);
+      window.removeEventListener("orientationchange", updateHeight);
+    };
+  }, []);
 
   function resetDrag() {
     dragState.current = { startX: 0, dx: 0, active: false };
@@ -99,14 +118,22 @@ export default function SwipeCard({ product, onLeft, onRight }: SwipeCardProps) 
   const sector = product.sector ?? null;
   const sectorLabel = sector ? SECTOR_LABELS[sector] ?? null : null;
   const sectorAccent = sector ? SECTOR_ACCENTS[sector] ?? "bg-white/80 text-gray-800" : null;
+  const rotation = Math.max(-18, Math.min(18, dx / 22));
 
   return (
-    <div className="relative mx-auto w-full max-w-md select-none touch-none">
+    <div
+      className="relative mx-auto w-full max-w-[420px] select-none touch-pan-y"
+      style={{ minHeight: cardHeight }}
+    >
       <div className="pointer-events-none absolute inset-0 -z-10 rounded-[38px] bg-gradient-to-br from-white/70 via-white/30 to-white/10 blur-2xl" />
       <div
         onPointerDown={handlePointerDown}
-        className="relative h-[480px] w-full overflow-hidden rounded-[38px] border border-white/60 bg-white/60 shadow-[0_32px_60px_-30px_rgba(244,63,94,0.55)] backdrop-blur"
-        style={{ transform: `translateX(${dx}px) rotate(${dx / 24}deg)`, transition: dragState.current.active ? "none" : "transform .18s ease" }}
+        className="relative w-full overflow-hidden rounded-[34px] border border-white/60 bg-white/60 shadow-[0_32px_60px_-30px_rgba(244,63,94,0.55)] backdrop-blur sm:rounded-[38px]"
+        style={{
+          height: cardHeight,
+          transform: `translateX(${dx}px) rotate(${rotation}deg)`,
+          transition: dragState.current.active ? "none" : "transform .18s ease, height .3s ease",
+        }}
       >
         <img
           src={imageUrl}

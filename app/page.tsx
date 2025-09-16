@@ -3,10 +3,10 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <section className="relative overflow-hidden rounded-[40px] border border-white/60 bg-white/70 p-8 shadow-2xl backdrop-blur-lg lg:p-12">
+    <section className="relative overflow-hidden rounded-[34px] border border-white/60 bg-white/70 p-6 shadow-2xl backdrop-blur-lg sm:rounded-[40px] sm:p-8 lg:p-12">
       <div className="pointer-events-none absolute -left-32 top-10 h-64 w-64 rounded-full bg-rose-200/50 blur-3xl" />
       <div className="pointer-events-none absolute -right-16 bottom-0 h-72 w-72 rounded-full bg-orange-200/50 blur-3xl" />
-      <div className="relative grid gap-12 lg:grid-cols-[1.1fr,0.9fr]">
+      <div className="relative grid gap-10 lg:grid-cols-[1.1fr,0.9fr] lg:gap-12">
         <div className="space-y-6">
           <Image
             src="/beauty-price-logo.svg"
@@ -17,23 +17,23 @@ export default function Home() {
             priority
           />
           <p className="text-xs font-semibold uppercase tracking-[0.35em] text-rose-400">Beauty swipe experience</p>
-          <h1 className="text-4xl font-bold leading-tight text-gray-900 sm:text-5xl">Can You Makeup</h1>
-          <p className="text-base text-gray-600">
+          <h1 className="text-3xl font-bold leading-tight text-gray-900 sm:text-4xl">Can You Makeup</h1>
+          <p className="text-sm text-gray-600 sm:text-base">
             La demo che porta il beauty commerce nell’esperienza swipe di Tinder: 100 prodotti mock, timer dinamico e checkout demo.
             Scegli un tier, scarta o aggiungi al volo e scopri il riepilogo finale.
           </p>
-          <div className="flex flex-col gap-4 sm:flex-row">
+          <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
             <Link
               href="/play?tier=t30"
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-rose-500 via-fuchsia-500 to-amber-400 px-7 py-3 text-base font-semibold text-white shadow-xl shadow-rose-200/70 transition hover:-translate-y-0.5 hover:shadow-2xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-400"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-rose-500 via-fuchsia-500 to-amber-400 px-6 py-3 text-sm font-semibold text-white shadow-xl shadow-rose-200/70 transition hover:-translate-y-0.5 hover:shadow-2xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-400 sm:px-7 sm:text-base"
             >
               💄 Gioca Tier 30€
             </Link>
-            <Link href="/play?tier=t50" className="btn justify-center text-base">
+            <Link href="/play?tier=t50" className="btn justify-center text-sm sm:text-base">
               ✨ Gioca Tier 50€
             </Link>
           </div>
-          <div className="space-y-2 text-sm text-gray-500">
+          <div className="space-y-2 text-xs text-gray-500 sm:text-sm">
             <p>
               100 prodotti mock divisi tra occhi, labbra e viso vengono mostrati in base alle percentuali configurate nella pagina {" "}
               <Link href="/settings" className="font-semibold text-rose-500 underline"> Settings</Link>.
@@ -41,7 +41,7 @@ export default function Home() {
             <p>Al termine del timer potrai aprire un checkout demo con i prodotti aggiunti al carrello.</p>
           </div>
         </div>
-        <div className="relative mx-auto flex h-[420px] w-full max-w-xs items-end justify-center">
+        <div className="relative mx-auto flex h-[360px] w-full max-w-xs items-end justify-center sm:h-[420px]">
           <div className="absolute inset-x-6 top-0 rounded-full bg-white/80 py-3 text-center text-xs font-semibold uppercase tracking-[0.45em] text-rose-400 shadow-lg shadow-rose-100/70">
             Swipe &amp; shop
           </div>
