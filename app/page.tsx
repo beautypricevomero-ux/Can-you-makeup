@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
@@ -7,6 +8,14 @@ export default function Home() {
       <div className="pointer-events-none absolute -right-16 bottom-0 h-72 w-72 rounded-full bg-orange-200/50 blur-3xl" />
       <div className="relative grid gap-12 lg:grid-cols-[1.1fr,0.9fr]">
         <div className="space-y-6">
+          <Image
+            src="/beauty-price-logo.svg"
+            alt="Beauty Price"
+            width={240}
+            height={80}
+            className="h-12 w-auto"
+            priority
+          />
           <p className="text-xs font-semibold uppercase tracking-[0.35em] text-rose-400">Beauty swipe experience</p>
           <h1 className="text-4xl font-bold leading-tight text-gray-900 sm:text-5xl">Can You Makeup</h1>
           <p className="text-base text-gray-600">
