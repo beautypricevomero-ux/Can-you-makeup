@@ -74,21 +74,6 @@
   opacity: 0.85;
 }
 
-.limitNotice {
-  position: fixed;
-  top: clamp(4.5rem, 10vw, 6rem);
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(255, 255, 255, 0.95);
-  color: #b10059;
-  padding: 0.8rem 1.2rem;
-  border-radius: 12px;
-  box-shadow: 0 12px 38px rgba(177, 0, 89, 0.22);
-  font-size: 0.95rem;
-  text-align: center;
-  z-index: 35;
-}
-
 .stepCard {
   width: min(640px, 100%);
   background: rgba(255, 255, 255, 0.94);
@@ -285,7 +270,7 @@
 }
 
 .tierBadge,
-.limitBadge {
+.infoBadge {
   display: inline-flex;
   align-items: center;
   padding: 0.55rem 1rem;
@@ -558,8 +543,7 @@
     padding: 2rem 1rem 3rem;
   }
 
-  .toast,
-  .limitNotice {
+  .toast {
     width: calc(100% - 2rem);
     max-width: 420px;
   }
@@ -585,13 +569,6 @@
   .ticketCard button {
     flex-direction: column;
     align-items: flex-start;
-  }
-
-  .swipeOverlay {
-    position: static;
-    transform: none;
-    justify-content: center;
-    margin-bottom: 1rem;
   }
 
   .productCard {

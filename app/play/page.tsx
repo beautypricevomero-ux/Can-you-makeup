@@ -18,13 +18,13 @@ type Product = {
 
 type Stage = "intro" | "ticket" | "checkout" | "countdown" | "playing" | "summary" | "address";
 type SessionResult = "timeout" | "completed";
-type Cooldown = { type: "reject" | "keep"; seconds: number };
+type ActionToast = { type: "reject" | "keep"; penalty: number; remaining: number };
 type CheckoutFormData = { name: string; email: string; cardNumber: string; expiry: string; cvv: string };
 type CheckoutState = "idle" | "processing" | "error";
 type ShippingForm = { fullName: string; address: string; city: string; zip: string; notes: string };
 
-const REJECT_COOLDOWN_SECONDS = 10;
-const KEEP_COOLDOWN_SECONDS = 30;
+const REJECT_PENALTY_SECONDS = 10;
+const KEEP_PENALTY_SECONDS = 30;
 const STORAGE_KEY = "cym-paid-tiers";
 const EMPTY_CHECKOUT: CheckoutFormData = { name: "", email: "", cardNumber: "", expiry: "", cvv: "" };
 const EMPTY_SHIPPING: ShippingForm = { fullName: "", address: "", city: "", zip: "", notes: "" };
@@ -46,25 +46,47 @@ function parsePrice(product: Product): number {
   return Number.isNaN(numeric) ? 0 : numeric;
 }
 
-function selectNextProduct(pool: Product[], pickedIds: string[], sectors: Sector[]) {
+function selectNextProduct(
+  pool: Product[],
+  pickedIds: string[],
+  sectors: Sector[],
+  maxPrice?: number
+) {
   const available = pool.filter((item) => !pickedIds.includes(item.id));
   if (available.length === 0) return null;
-  if (sectors.length === 0) return available[0];
-  const totalWeight = sectors.reduce((sum, sector) => sum + sector.weight, 0);
+  let candidatePool = available;
+  if (typeof maxPrice === "number") {
+    const filtered = available.filter((item) => parsePrice(item) <= maxPrice + 1e-2);
+    if (filtered.length === 0) {
+      return null;
+    }
+    candidatePool = filtered;
+  }
+  if (candidatePool.length === 0) return null;
+  if (sectors.length === 0) return candidatePool[0];
+
+  const sectorEntries = sectors
+    .map((sector) => ({
+      sector,
+      products: candidatePool.filter((item) => item.sector === sector.id),
+    }))
+    .filter((entry) => entry.products.length > 0);
+
+  if (sectorEntries.length === 0) {
+    return candidatePool[Math.floor(Math.random() * candidatePool.length)];
+  }
+
+  const totalWeight = sectorEntries.reduce((sum, entry) => sum + entry.sector.weight, 0);
   let ticket = Math.random() * totalWeight;
-  let chosenSector = sectors[0];
-  for (const sector of sectors) {
-    ticket -= sector.weight;
+  for (const entry of sectorEntries) {
+    ticket -= entry.sector.weight;
     if (ticket <= 0) {
-      chosenSector = sector;
-      break;
+      return entry.products[Math.floor(Math.random() * entry.products.length)];
     }
   }
-  const sectorProducts = available.filter((item) => item.sector === chosenSector.id);
-  if (sectorProducts.length === 0) {
-    return available[0];
-  }
-  return sectorProducts[Math.floor(Math.random() * sectorProducts.length)];
+
+  const fallback = sectorEntries[sectorEntries.length - 1];
+  return fallback.products[Math.floor(Math.random() * fallback.products.length)];
 }
 
 function TimerBar({ total, left }: { total: number; left: number }) {
@@ -79,28 +101,19 @@ function TimerBar({ total, left }: { total: number; left: number }) {
   );
 }
 
-function ActionNotification({ cooldown }: { cooldown: Cooldown | null }) {
-  if (!cooldown) return null;
+function ActionNotification({ toast }: { toast: ActionToast | null }) {
+  if (!toast) return null;
   return (
     <div className={styles.toast} role="status" aria-live="assertive">
-      <div className={styles.toastIcon}>{cooldown.type === "reject" ? "⏳" : "🛒"}</div>
+      <div className={styles.toastIcon}>{toast.type === "reject" ? "⏳" : "🛒"}</div>
       <div>
         <p className={styles.toastTitle}>
-          {cooldown.type === "reject" ? "Pausa dopo uno swipe" : "Prodotto nel carrello"}
+          {toast.type === "reject" ? "Prodotto scartato" : "Prodotto nel carrello"}
         </p>
         <p className={styles.toastBody}>
-          Attendi ancora <strong>{cooldown.seconds}s</strong> prima della prossima azione.
+          Hai consumato <strong>{toast.penalty}s</strong>. Tempo residuo: <strong>{toast.remaining}s</strong>.
         </p>
       </div>
-    </div>
-  );
-}
-
-function ValueLimitNotice({ message }: { message: string | null }) {
-  if (!message) return null;
-  return (
-    <div className={styles.limitNotice} role="alert">
-      <strong>Limite carrello:</strong> {message}
     </div>
   );
 }
@@ -215,10 +228,9 @@ export default function PlayPage() {
   const [result, setResult] = useState<SessionResult | null>(null);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [isFetching, setIsFetching] = useState(false);
-  const [actionCooldown, setActionCooldown] = useState<Cooldown | null>(null);
-  const [valueWarning, setValueWarning] = useState<string | null>(null);
+  const [actionToast, setActionToast] = useState<ActionToast | null>(null);
 
-  const cooldownTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const toastTimerRef = useRef<NodeJS.Timeout | null>(null);
   const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const activeTier = useMemo(() => settings?.tiers.find((tier) => tier.id === activeTierId) ?? null, [settings, activeTierId]);
@@ -256,11 +268,11 @@ export default function PlayPage() {
       setResult(outcome);
       setStage("summary");
       setSecondsLeft(0);
-      if (cooldownTimerRef.current) {
-        clearInterval(cooldownTimerRef.current);
-        cooldownTimerRef.current = null;
+      if (toastTimerRef.current) {
+        clearTimeout(toastTimerRef.current);
+        toastTimerRef.current = null;
       }
-      setActionCooldown(null);
+      setActionToast(null);
     },
     []
   );
@@ -280,15 +292,9 @@ export default function PlayPage() {
   }, [stage, secondsLeft, finishRound]);
 
   useEffect(() => {
-    if (!valueWarning) return;
-    const timer = setTimeout(() => setValueWarning(null), 3600);
-    return () => clearTimeout(timer);
-  }, [valueWarning]);
-
-  useEffect(() => {
     return () => {
-      if (cooldownTimerRef.current) {
-        clearInterval(cooldownTimerRef.current);
+      if (toastTimerRef.current) {
+        clearTimeout(toastTimerRef.current);
       }
       if (countdownTimerRef.current) {
         clearInterval(countdownTimerRef.current);
@@ -305,23 +311,22 @@ export default function PlayPage() {
       setCartValue(0);
       setFetchError(null);
       setResult(null);
-      setValueWarning(null);
       setShippingForm(() => ({ ...EMPTY_SHIPPING }));
       setAddressSubmitted(false);
       if (!preserveRetries) {
         setAttemptsLeft(1);
       }
-      if (cooldownTimerRef.current) {
-        clearInterval(cooldownTimerRef.current);
-        cooldownTimerRef.current = null;
+      if (toastTimerRef.current) {
+        clearTimeout(toastTimerRef.current);
+        toastTimerRef.current = null;
       }
-      setActionCooldown(null);
+      setActionToast(null);
     },
     []
   );
 
   const startRound = useCallback(
-    async (tier: Tier) => {
+    async (tier: Tier, limit: number) => {
       if (!settings) return;
       setStage("playing");
       setIsFetching(true);
@@ -336,7 +341,7 @@ export default function PlayPage() {
         const data = await response.json();
         const products: Product[] = data.products ?? [];
         setPool(products);
-        const next = selectNextProduct(products, [], sectors);
+        const next = selectNextProduct(products, [], sectors, limit);
         if (next) {
           setCurrentProduct(next);
         } else {
@@ -356,7 +361,8 @@ export default function PlayPage() {
     (tier: Tier, preserveRetries = false) => {
       resetRoundState(preserveRetries);
       const multiplier = 2 + Math.random() * 0.5;
-      setValueLimit(Number((tier.fee * multiplier).toFixed(2)));
+      const limit = Number((tier.fee * multiplier).toFixed(2));
+      setValueLimit(limit);
       setSecondsLeft(tier.secs);
       setCountdownValue(3);
       setStage("countdown");
@@ -374,38 +380,22 @@ export default function PlayPage() {
             clearInterval(countdownTimerRef.current);
             countdownTimerRef.current = null;
           }
-          void startRound(tier);
+          void startRound(tier, limit);
         }
       }, 1000);
     },
     [resetRoundState, startRound]
   );
 
-  const triggerCooldown = useCallback((type: "reject" | "keep") => {
-    const duration = type === "reject" ? REJECT_COOLDOWN_SECONDS : KEEP_COOLDOWN_SECONDS;
-    if (cooldownTimerRef.current) {
-      clearInterval(cooldownTimerRef.current);
+  const showActionToast = useCallback((type: "reject" | "keep", penalty: number, remaining: number) => {
+    setActionToast({ type, penalty, remaining });
+    if (toastTimerRef.current) {
+      clearTimeout(toastTimerRef.current);
     }
-    setActionCooldown({ type, seconds: duration });
-    cooldownTimerRef.current = setInterval(() => {
-      setActionCooldown((prev) => {
-        if (!prev) {
-          if (cooldownTimerRef.current) {
-            clearInterval(cooldownTimerRef.current);
-            cooldownTimerRef.current = null;
-          }
-          return null;
-        }
-        if (prev.seconds <= 1) {
-          if (cooldownTimerRef.current) {
-            clearInterval(cooldownTimerRef.current);
-            cooldownTimerRef.current = null;
-          }
-          return null;
-        }
-        return { ...prev, seconds: prev.seconds - 1 };
-      });
-    }, 1000);
+    toastTimerRef.current = setTimeout(() => {
+      setActionToast(null);
+      toastTimerRef.current = null;
+    }, 2400);
   }, []);
 
   const handleTicketSelection = useCallback(
@@ -444,51 +434,51 @@ export default function PlayPage() {
   );
 
   const handleReject = useCallback(() => {
-    if (!settings || !activeTier || !currentProduct || stage !== "playing" || actionCooldown) return;
+    if (!settings || !activeTier || !currentProduct || stage !== "playing") return;
     const sectors = settings.sectorsByTier[activeTier.id] ?? [];
     const nextPicked = [...pickedIds, currentProduct.id];
     setPickedIds(nextPicked);
-    const nextProduct = selectNextProduct(pool, nextPicked, sectors);
+    const remainingBudget = Math.max(0, valueLimit - cartValue);
+    const nextProduct = selectNextProduct(pool, nextPicked, sectors, remainingBudget);
     if (nextProduct) {
       setCurrentProduct(nextProduct);
     } else {
       finishRound("completed");
     }
-    triggerCooldown("reject");
-  }, [settings, activeTier, currentProduct, stage, actionCooldown, pickedIds, pool, finishRound, triggerCooldown]);
+    setSecondsLeft((prev) => {
+      const penalty = Math.min(REJECT_PENALTY_SECONDS, prev);
+      const next = Math.max(0, prev - REJECT_PENALTY_SECONDS);
+      showActionToast("reject", penalty, next);
+      return next;
+    });
+  }, [settings, activeTier, currentProduct, stage, pickedIds, valueLimit, cartValue, pool, finishRound, showActionToast]);
 
   const handleKeep = useCallback(() => {
-    if (!settings || !activeTier || !currentProduct || stage !== "playing" || actionCooldown) return;
+    if (!settings || !activeTier || !currentProduct || stage !== "playing") return;
     const productPrice = parsePrice(currentProduct);
-    if (cartValue + productPrice > valueLimit + 1e-2) {
-      setValueWarning(
-        `Con questo biglietto puoi riempire il carrello fino a ${formatCurrency(valueLimit)}. Rimuovi un prodotto o scarta questo articolo.`
-      );
-      const sectors = settings.sectorsByTier[activeTier.id] ?? [];
-      const nextPicked = [...pickedIds, currentProduct.id];
-      setPickedIds(nextPicked);
-      const nextProduct = selectNextProduct(pool, nextPicked, sectors);
-      if (nextProduct) {
-        setCurrentProduct(nextProduct);
-      } else {
-        finishRound("completed");
-      }
-      triggerCooldown("reject");
-      return;
-    }
     const sectors = settings.sectorsByTier[activeTier.id] ?? [];
     const nextPicked = [...pickedIds, currentProduct.id];
     setPickedIds(nextPicked);
     setKeptProducts((prev) => [...prev, currentProduct]);
-    setCartValue((prev) => Number((prev + productPrice).toFixed(2)));
-    const nextProduct = selectNextProduct(pool, nextPicked, sectors);
+    let updatedCartValue = cartValue;
+    setCartValue((prev) => {
+      updatedCartValue = Number((prev + productPrice).toFixed(2));
+      return updatedCartValue;
+    });
+    const remainingBudget = Math.max(0, valueLimit - updatedCartValue);
+    const nextProduct = selectNextProduct(pool, nextPicked, sectors, remainingBudget);
     if (nextProduct) {
       setCurrentProduct(nextProduct);
     } else {
       finishRound("completed");
     }
-    triggerCooldown("keep");
-  }, [settings, activeTier, currentProduct, stage, actionCooldown, pickedIds, pool, cartValue, valueLimit, finishRound, triggerCooldown]);
+    setSecondsLeft((prev) => {
+      const penalty = Math.min(KEEP_PENALTY_SECONDS, prev);
+      const next = Math.max(0, prev - KEEP_PENALTY_SECONDS);
+      showActionToast("keep", penalty, next);
+      return next;
+    });
+  }, [settings, activeTier, currentProduct, stage, pickedIds, valueLimit, cartValue, pool, finishRound, showActionToast]);
 
   const handleRepeat = useCallback(() => {
     if (!activeTier || attemptsLeft <= 0) return;
@@ -515,8 +505,7 @@ export default function PlayPage() {
 
   return (
     <section className={styles.page}>
-      <ActionNotification cooldown={actionCooldown} />
-      <ValueLimitNotice message={valueWarning} />
+      <ActionNotification toast={actionToast} />
 
       {!settings ? (
         <div className={styles.loader}>Caricamento impostazioni…</div>
@@ -544,8 +533,8 @@ export default function PlayPage() {
                 </summary>
                 <div className={styles.ticketBody}>
                   <p>
-                    Ideale per esplorare i settori Low Cost, Low Cost Plus, Semi Luxury, Luxury ed Extra Luxury con un tetto massimo
-                    dinamico tra il 200% e il 250% del valore del biglietto.
+                    Ideale per esplorare i settori Low Cost, Low Cost Plus, Semi Luxury, Luxury ed Extra Luxury con tempo dedicato a
+                    riempire il carrello.
                   </p>
                   {paidTickets.has(tier.id) ? <span className={styles.ticketBadge}>Biglietto già acquistato</span> : null}
                   <button type="button" onClick={() => handleTicketSelection(tier.id)}>
@@ -632,7 +621,7 @@ export default function PlayPage() {
         <div className={styles.stepCard}>
           <h2 className={styles.stepTitle}>Preparati allo shopping</h2>
           <p className={styles.stepSubtitle}>
-            Valore massimo carrello: {formatCurrency(valueLimit)} — tempo disponibile {activeTier.secs} secondi.
+            Hai {activeTier.secs} secondi per riempire il carrello con i prodotti che ami.
           </p>
           <div className={styles.countdownCircle}>
             {countdownValue > 0 ? countdownValue : "Via!"}
@@ -645,8 +634,8 @@ export default function PlayPage() {
           <header className={styles.playHeader}>
             <div className={styles.badges}>
               <span className={styles.tierBadge}>{activeTier.label}</span>
-              <span className={styles.limitBadge}>Limite {formatCurrency(valueLimit)}</span>
-              <span className={styles.limitBadge}>Nel carrello {formatCurrency(totalValue)}</span>
+              <span className={styles.infoBadge}>Valore carrello {formatCurrency(totalValue)}</span>
+              <span className={styles.infoBadge}>{keptProducts.length} prodotti</span>
             </div>
             <TimerBar total={activeTier.secs} left={secondsLeft} />
           </header>
@@ -658,7 +647,7 @@ export default function PlayPage() {
             {currentProduct ? (
               <SwipeCard
                 product={currentProduct}
-                disabled={!!actionCooldown}
+                disabled={secondsLeft <= 0}
                 onReject={handleReject}
                 onKeep={handleKeep}
                 sectorLabel={currentSectorLabel}
