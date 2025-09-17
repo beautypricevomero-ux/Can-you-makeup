@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 160" role="img" aria-labelledby="title desc">
+  <title id="title">Beauty Price logo</title>
+  <desc id="desc">Heart-shaped icon with a lipstick and the words Beauty Price</desc>
+  <g fill="#E53935">
+    <path d="M96 18c-11.6-11.6-30.4-11.6-42 0a29.6 29.6 0 0 0-8.5 21c0 33.3 29.6 57 51.5 73.7 21.9-16.7 51.5-40.4 51.5-73.7A29.6 29.6 0 0 0 140 18c-11.6-11.6-30.4-11.6-42 0-3 3-5.3 6.4-7 9.9-1.7-3.5-4-7-7-9.9Z"/>
+    <path d="M104 134c-23-17.5-53-42.7-53-77 0-11.4 4.4-22 12.3-29.9C71.2 18.2 60.7 14 50 14S28.8 18.2 21 27.1A40.9 40.9 0 0 0 10 57c0 34.3 30 59.5 53 77Z"/>
+    <path d="M180 56h-1.4c-7.5 0-12.6 4.6-12.6 11.6 0 7 5 11.5 12.6 11.5h1.4c7.4 0 12.5-4.6 12.5-11.5 0-7-5.1-11.6-12.5-11.6Z" opacity="0"/>
+  </g>
+  <path fill="#fff" d="M90 44h12l8 28v38h-28V72l8-28Z"/>
+  <path fill="#fff" d="M76 104h40v14H76z"/>
+  <text x="180" y="76" fill="#E53935" font-family="'Arial Black','Helvetica Neue',Arial,sans-serif" font-size="56" font-weight="700" letter-spacing="3">BEAUTY</text>
+  <text x="180" y="132" fill="#E53935" font-family="'Arial Black','Helvetica Neue',Arial,sans-serif" font-size="56" font-weight="700" letter-spacing="3">PRICE</text>
+  <text x="412" y="68" fill="#E53935" font-family="'Arial Black','Helvetica Neue',Arial,sans-serif" font-size="28" font-weight="700">®</text>
+</svg>
