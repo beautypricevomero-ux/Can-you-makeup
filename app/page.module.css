@@ -1,0 +1,118 @@
+.hero {
+  display: grid;
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  align-items: center;
+  padding: clamp(1.5rem, 4vw, 3rem);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.92) 0%, rgba(255, 238, 250, 0.85) 100%);
+  border-radius: 28px;
+  box-shadow: 0 25px 50px rgba(178, 104, 255, 0.12);
+}
+
+.copy h1 {
+  font-size: clamp(2.4rem, 5vw, 3.4rem);
+  margin: 0 0 0.75rem;
+}
+
+.copy p {
+  margin: 0;
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  line-height: 1.6;
+  max-width: 38ch;
+}
+
+.actions {
+  margin-top: clamp(1rem, 2.5vw, 2rem);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.preview {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.previewCard {
+  width: min(320px, 100%);
+  padding: 2.25rem 2rem 2.5rem;
+  border-radius: 36px;
+  background: radial-gradient(circle at top, #fff5f9 0%, #f7fbff 70%, #ffffff 100%);
+  box-shadow: 0 25px 50px rgba(184, 123, 255, 0.18);
+  text-align: left;
+}
+
+.previewCard h3 {
+  margin: 0.75rem 0 0.5rem;
+  font-size: 1.4rem;
+}
+
+.previewCard p {
+  margin: 0;
+  font-size: 0.95rem;
+  opacity: 0.75;
+}
+
+.previewPrice {
+  margin-top: 1.5rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.previewBadge {
+  display: inline-flex;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: rgba(255, 122, 180, 0.16);
+  color: #b10059;
+  font-weight: 600;
+}
+
+.floatingActions {
+  position: absolute;
+  inset: auto 0 -2.5rem 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 1.75rem;
+  pointer-events: none;
+}
+
+.floatingActions span {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: white;
+  box-shadow: 0 20px 35px rgba(255, 122, 180, 0.35);
+}
+
+.reject {
+  background: linear-gradient(145deg, #ff5e7a 0%, #ff8c6f 100%);
+}
+
+.like {
+  background: linear-gradient(145deg, #73e0a9 0%, #31c6d6 100%);
+}
+
+@media (max-width: 720px) {
+  .hero {
+    padding: 1.5rem;
+  }
+
+  .floatingActions {
+    inset: auto 0 -2rem 0;
+    padding: 0 1.25rem;
+  }
+
+  .floatingActions span {
+    width: 56px;
+    height: 56px;
+  }
+}

@@ -1,0 +1,424 @@
+.page {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.tierPicker {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem;
+}
+
+.tierButton {
+  padding: 0.9rem 1.1rem;
+  border-radius: 18px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: rgba(255, 255, 255, 0.85);
+  text-align: left;
+  display: grid;
+  gap: 0.35rem;
+  box-shadow: 0 12px 24px rgba(177, 0, 89, 0.06);
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tierButton small {
+  opacity: 0.65;
+  font-size: 0.85rem;
+}
+
+.tierButtonActive {
+  border-color: rgba(177, 0, 89, 0.4);
+  box-shadow: 0 16px 32px rgba(177, 0, 89, 0.18);
+  transform: translateY(-2px);
+}
+
+.timerWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 200px;
+}
+
+.timerBar {
+  flex: 1;
+  height: 8px;
+  background: rgba(15, 23, 42, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.timerBarFill {
+  height: 100%;
+  background: linear-gradient(135deg, #ff7cb4 0%, #ff9a8d 100%);
+  transition: width 0.6s ease;
+}
+
+.timerLabel {
+  font-weight: 600;
+  min-width: 48px;
+  text-align: right;
+}
+
+.notification {
+  position: fixed;
+  top: clamp(1rem, 3vw, 2rem);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(17, 24, 39, 0.92);
+  color: white;
+  padding: 0.85rem 1.25rem;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.4);
+  z-index: 40;
+  pointer-events: none;
+  max-width: min(480px, 90vw);
+}
+
+.notificationIcon {
+  font-size: 1.75rem;
+}
+
+.notificationTitle {
+  margin: 0;
+  font-weight: 600;
+}
+
+.notificationCopy {
+  margin: 0;
+  opacity: 0.85;
+}
+
+.gameArea {
+  display: grid;
+  gap: clamp(1.25rem, 3vw, 2rem);
+  background: rgba(255, 255, 255, 0.82);
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  border-radius: 28px;
+  box-shadow: 0 24px 40px rgba(139, 92, 246, 0.12);
+}
+
+.gameHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.gameHeader h1 {
+  margin: 0;
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+}
+
+.gameSubtitle {
+  margin: 0.35rem 0 0;
+  opacity: 0.65;
+}
+
+.cardStage {
+  display: flex;
+  justify-content: center;
+}
+
+.loadingCard {
+  width: min(420px, 100%);
+  min-height: 420px;
+  display: grid;
+  place-items: center;
+  border-radius: 32px;
+  background: repeating-linear-gradient(135deg, rgba(177, 0, 89, 0.08), rgba(177, 0, 89, 0.08) 12px, transparent 12px, transparent 24px);
+  text-align: center;
+  padding: 1.5rem;
+  color: rgba(17, 24, 39, 0.65);
+}
+
+.swipeCard {
+  position: relative;
+  width: min(420px, 100%);
+  display: grid;
+  gap: 1.5rem;
+  padding: clamp(1.5rem, 3vw, 2rem);
+  border-radius: 36px;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.92) 0%, rgba(255, 236, 250, 0.7) 100%);
+  box-shadow: 0 28px 60px rgba(177, 0, 89, 0.18);
+  cursor: grab;
+  transition: transform 0.2s ease;
+  touch-action: none;
+}
+
+.swipeCard:active {
+  cursor: grabbing;
+}
+
+.cardDisabled {
+  cursor: not-allowed;
+  opacity: 0.85;
+}
+
+.cardImageWrapper {
+  position: relative;
+  border-radius: 28px;
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+  background: linear-gradient(145deg, rgba(255, 122, 180, 0.25), rgba(115, 224, 169, 0.2));
+}
+
+.cardImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cardBadge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(17, 24, 39, 0.75);
+  color: white;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.cardBody h2 {
+  margin: 0;
+  font-size: 1.45rem;
+}
+
+.cardBody p {
+  margin: 0.65rem 0 0;
+  line-height: 1.6;
+  opacity: 0.75;
+}
+
+.cardPrice {
+  margin-top: 1.25rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.cardOverlay {
+  position: absolute;
+  inset: auto 0 clamp(1rem, 4vw, 1.75rem) 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 clamp(1.5rem, 5vw, 2.5rem);
+  pointer-events: none;
+}
+
+.circleButton {
+  pointer-events: auto;
+  width: clamp(64px, 12vw, 80px);
+  height: clamp(64px, 12vw, 80px);
+  border-radius: 50%;
+  border: none;
+  display: grid;
+  place-items: center;
+  font-size: clamp(1.8rem, 4vw, 2.2rem);
+  color: white;
+  box-shadow: 0 22px 35px rgba(0, 0, 0, 0.22);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.circleButton:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.circleButton:hover:not(:disabled) {
+  transform: scale(1.05);
+}
+
+.rejectButton {
+  background: linear-gradient(150deg, #ff6b7b 0%, #ff9671 100%);
+}
+
+.keepButton {
+  background: linear-gradient(150deg, #6ee7b7 0%, #3bb6d4 100%);
+}
+
+.gameFooter {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.95rem;
+  color: rgba(17, 24, 39, 0.7);
+}
+
+.checkoutWrapper {
+  display: grid;
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  background: rgba(255, 255, 255, 0.9);
+  padding: clamp(1.75rem, 3.5vw, 2.75rem);
+  border-radius: 30px;
+  box-shadow: 0 24px 44px rgba(59, 130, 246, 0.12);
+}
+
+.checkoutIntro h1 {
+  margin: 0 0 0.75rem;
+  font-size: clamp(1.9rem, 3vw, 2.5rem);
+}
+
+.checkoutIntro p {
+  margin: 0 0 1.25rem;
+  line-height: 1.6;
+}
+
+.checkoutSummary {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  border-radius: 20px;
+  background: rgba(177, 0, 89, 0.08);
+}
+
+.summaryLabel {
+  display: block;
+  font-size: 0.75rem;
+  opacity: 0.65;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.summaryValue {
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+.checkoutNote {
+  margin: 0;
+  font-size: 0.85rem;
+  color: rgba(17, 24, 39, 0.65);
+}
+
+.checkoutForm {
+  display: grid;
+  gap: 1rem;
+}
+
+.checkoutForm label {
+  display: grid;
+  gap: 0.45rem;
+  font-weight: 500;
+}
+
+.checkoutError {
+  margin: 0;
+  color: #b10059;
+  font-weight: 600;
+}
+
+.checkoutRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.75rem;
+}
+
+.summaryWrapper {
+  display: grid;
+  gap: 2rem;
+}
+
+.summaryCard {
+  display: grid;
+  gap: 1rem;
+  justify-items: center;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.88);
+  padding: clamp(1.75rem, 3vw, 2.75rem);
+  border-radius: 32px;
+  box-shadow: 0 30px 50px rgba(99, 102, 241, 0.18);
+}
+
+.summaryIcon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(145deg, #ff7cb4 0%, #ff9a8d 100%);
+  color: white;
+  font-size: 2rem;
+}
+
+.summaryCard h1 {
+  margin: 0;
+  font-size: clamp(1.9rem, 3vw, 2.4rem);
+}
+
+.summaryLead {
+  margin: 0;
+  max-width: 40ch;
+  line-height: 1.6;
+  color: rgba(17, 24, 39, 0.7);
+}
+
+.summaryActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.keepList {
+  background: rgba(255, 255, 255, 0.86);
+  border-radius: 24px;
+  padding: 1.5rem 1.75rem;
+  box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.05);
+}
+
+.keepList h2 {
+  margin: 0 0 1rem;
+  font-size: 1.35rem;
+}
+
+.keepList ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.keepList li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.95rem;
+}
+
+.error {
+  color: #b10059;
+  font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  .notification {
+    top: 1rem;
+  }
+
+  .timerWrapper {
+    width: 100%;
+  }
+
+  .timerLabel {
+    min-width: auto;
+  }
+
+  .cardOverlay {
+    inset: auto 0 clamp(0.75rem, 6vw, 1.25rem) 0;
+    padding: 0 clamp(1rem, 6vw, 2rem);
+  }
+}
