@@ -1,0 +1,577 @@
+.page {
+  min-height: calc(100vh - 160px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1.5rem, 4vw, 3.5rem) clamp(1rem, 4vw, 3rem) clamp(3rem, 6vw, 4rem);
+  position: relative;
+}
+
+.loader {
+  text-align: center;
+  font-weight: 500;
+  color: #b10059;
+}
+
+.timer {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 15px 45px rgba(20, 30, 55, 0.12);
+}
+
+.timerTrack {
+  width: clamp(140px, 25vw, 240px);
+  height: 0.5rem;
+  border-radius: 999px;
+  background: rgba(255, 174, 215, 0.28);
+  overflow: hidden;
+}
+
+.timerFill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(135deg, #ff7cb4 0%, #ff9a8d 100%);
+  transition: width 0.35s ease;
+}
+
+.timerLabel {
+  font-weight: 600;
+  color: #b10059;
+}
+
+.toast {
+  position: fixed;
+  top: clamp(1rem, 4vw, 2.5rem);
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1.1rem;
+  border-radius: 999px;
+  background: rgba(17, 24, 39, 0.85);
+  color: white;
+  box-shadow: 0 18px 45px rgba(17, 24, 39, 0.3);
+  z-index: 40;
+}
+
+.toastIcon {
+  font-size: 1.25rem;
+}
+
+.toastTitle {
+  font-weight: 600;
+  margin: 0 0 0.1rem;
+}
+
+.toastBody {
+  margin: 0;
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+
+.stepCard {
+  width: min(640px, 100%);
+  background: rgba(255, 255, 255, 0.94);
+  border-radius: 28px;
+  box-shadow: 0 28px 80px rgba(20, 30, 55, 0.18);
+  padding: clamp(2rem, 4vw, 3.25rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  text-align: center;
+}
+
+.introTitle {
+  font-size: clamp(2.4rem, 6vw, 3.2rem);
+  font-weight: 700;
+  color: #b10059;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.introCopy {
+  margin: 0;
+  font-size: clamp(1rem, 2.6vw, 1.25rem);
+  color: rgba(17, 24, 39, 0.74);
+}
+
+.glowButton {
+  align-self: center;
+  border: none;
+  border-radius: 999px;
+  padding: 0.9rem 2.6rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: white;
+  background: radial-gradient(circle at 50% 20%, #ffe6f3 0%, #ff7cb4 38%, #b10059 100%);
+  box-shadow: 0 25px 70px rgba(177, 0, 89, 0.35), 0 0 25px rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.glowButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.glowButton:hover:not(:disabled),
+.glowButton:focus-visible:not(:disabled) {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 28px 75px rgba(177, 0, 89, 0.42), 0 0 32px rgba(255, 255, 255, 0.9);
+}
+
+.stepTitle {
+  margin: 0;
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-weight: 700;
+  color: #b10059;
+}
+
+.stepSubtitle {
+  margin: 0;
+  color: rgba(17, 24, 39, 0.7);
+  font-size: 1.05rem;
+}
+
+.ticketGrid {
+  display: grid;
+  gap: 1rem;
+}
+
+.ticketCard {
+  background: rgba(255, 255, 255, 0.88);
+  border-radius: 20px;
+  border: 1px solid rgba(177, 0, 89, 0.12);
+  overflow: hidden;
+}
+
+.ticketCard summary {
+  list-style: none;
+}
+
+.ticketCard summary::-webkit-details-marker {
+  display: none;
+}
+
+.ticketSummary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.2rem 1.5rem;
+  background: linear-gradient(135deg, rgba(255, 124, 180, 0.15), rgba(255, 154, 141, 0.18));
+  color: #b10059;
+  font-weight: 600;
+  font-size: 1.15rem;
+  cursor: pointer;
+}
+
+.ticketSummary:focus-visible {
+  outline: 2px solid rgba(177, 0, 89, 0.32);
+  outline-offset: 4px;
+}
+
+.ticketBody {
+  padding: 1.2rem 1.5rem 1.5rem;
+  text-align: left;
+  font-size: 0.95rem;
+  color: rgba(17, 24, 39, 0.7);
+  display: grid;
+  gap: 0.5rem;
+}
+
+.ticketBody button {
+  justify-self: start;
+  border: none;
+  border-radius: 999px;
+  padding: 0.6rem 1.3rem;
+  background: rgba(177, 0, 89, 0.18);
+  color: #b10059;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.ticketBody button:hover,
+.ticketBody button:focus-visible {
+  transform: translateY(-2px);
+}
+
+.ticketPrice {
+  font-size: 1.4rem;
+}
+
+.ticketTime {
+  font-size: 0.95rem;
+  color: rgba(17, 24, 39, 0.65);
+}
+
+.ticketBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(177, 0, 89, 0.12);
+  color: #b10059;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.countdownCircle {
+  width: clamp(160px, 35vw, 220px);
+  height: clamp(160px, 35vw, 220px);
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 35%, #ffe6f3, #ff7cb4 65%, #b10059 100%);
+  display: grid;
+  place-items: center;
+  color: white;
+  font-weight: 700;
+  font-size: clamp(2.5rem, 10vw, 4rem);
+  margin: 1rem auto 0;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.playground {
+  width: min(960px, 100%);
+  display: grid;
+  gap: 1.8rem;
+}
+
+.playHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.badges {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.tierBadge,
+.infoBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.55rem 1rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 12px 30px rgba(20, 30, 55, 0.14);
+  font-weight: 600;
+  color: #b10059;
+}
+
+.playBody {
+  display: flex;
+  justify-content: center;
+}
+
+.productCard {
+  position: relative;
+  width: min(420px, 100%);
+  border-radius: 32px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 35px 80px rgba(20, 30, 55, 0.18);
+  overflow: hidden;
+  display: grid;
+  gap: 1.1rem;
+  padding-bottom: 1.25rem;
+  transition: transform 0.2s ease;
+}
+
+.cardDisabled {
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+.productImageWrap {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+}
+
+.productImageWrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sectorBadge {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.88);
+  color: #b10059;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.productBody {
+  padding: 0 1.75rem;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.productBody h2 {
+  margin: 0;
+  font-size: 1.35rem;
+  color: #b10059;
+}
+
+.productBody p {
+  margin: 0;
+  color: rgba(17, 24, 39, 0.7);
+  font-size: 0.95rem;
+}
+
+.priceTag {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #111827;
+}
+
+.swipeOverlay {
+  position: absolute;
+  bottom: 1.4rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  gap: 1.4rem;
+}
+
+.controlButton {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: none;
+  font-size: 1.8rem;
+  display: grid;
+  place-items: center;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 20px 48px rgba(20, 30, 55, 0.28);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.controlButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.controlButton:hover:not(:disabled),
+.controlButton:focus-visible:not(:disabled) {
+  transform: translateY(-3px);
+}
+
+.reject {
+  background: linear-gradient(135deg, #ff6b7b 0%, #ff416d 100%);
+}
+
+.keep {
+  background: linear-gradient(135deg, #3ac7a5 0%, #1abc9c 100%);
+}
+
+.summaryList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.9rem;
+  text-align: left;
+  max-height: 320px;
+  overflow: auto;
+}
+
+.summaryList li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: inset 0 0 0 1px rgba(177, 0, 89, 0.08);
+}
+
+.summaryList h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+  color: #b10059;
+}
+
+.summaryList p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: rgba(17, 24, 39, 0.66);
+}
+
+.summaryList span {
+  font-weight: 700;
+  color: #111827;
+}
+
+.summaryActions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.summaryActions button {
+  border-radius: 999px;
+  padding: 0.75rem 1.6rem;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  background: rgba(177, 0, 89, 0.12);
+  color: #b10059;
+  transition: transform 0.2s ease;
+}
+
+.summaryActions button:hover:not(:disabled),
+.summaryActions button:focus-visible:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.summaryActions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.savings {
+  margin: 0;
+  font-weight: 600;
+  color: #b10059;
+}
+
+.attempts {
+  margin: 0;
+  font-size: 0.9rem;
+  color: rgba(17, 24, 39, 0.65);
+}
+
+.error {
+  margin: 0;
+  font-weight: 600;
+  color: #ff416d;
+}
+
+.form {
+  display: grid;
+  gap: 1rem;
+  text-align: left;
+}
+
+.formRow {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.formGroup {
+  display: grid;
+  gap: 1rem;
+}
+
+.form label {
+  font-weight: 600;
+  color: #b10059;
+}
+
+.form input,
+.form textarea {
+  border-radius: 14px;
+  border: 1px solid rgba(177, 0, 89, 0.18);
+  padding: 0.75rem 0.9rem;
+  font: inherit;
+  background: rgba(255, 255, 255, 0.96);
+  resize: vertical;
+}
+
+.form textarea {
+  min-height: 120px;
+}
+
+.form input:focus-visible,
+.form textarea:focus-visible {
+  outline: 2px solid rgba(177, 0, 89, 0.3);
+  border-color: rgba(177, 0, 89, 0.4);
+}
+
+.successBox {
+  padding: 1.2rem 1.4rem;
+  border-radius: 18px;
+  background: rgba(58, 199, 165, 0.15);
+  color: #145246;
+  font-weight: 500;
+}
+
+@media (max-width: 960px) {
+  .swipeOverlay {
+    gap: 1rem;
+    bottom: 1rem;
+  }
+
+  .controlButton {
+    width: 62px;
+    height: 62px;
+  }
+}
+
+@media (max-width: 720px) {
+  .page {
+    padding: 2rem 1rem 3rem;
+  }
+
+  .toast {
+    width: calc(100% - 2rem);
+    max-width: 420px;
+  }
+
+  .playground {
+    gap: 1.4rem;
+  }
+
+  .productBody {
+    padding: 0 1.25rem;
+  }
+
+  .summaryList {
+    max-height: 260px;
+  }
+}
+
+@media (max-width: 520px) {
+  .stepCard {
+    padding: 1.75rem 1.4rem;
+  }
+
+  .ticketCard button {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .productCard {
+    padding-bottom: 0;
+  }
+}
