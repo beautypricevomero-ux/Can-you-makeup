@@ -210,7 +210,9 @@ export default function Home() {
   };
 
   return (
-    <div className="app-shell">
+    <div
+      className={`app-shell ${step === "timer" ? "app-shell--timer" : "app-shell--choose"}`}
+    >
       {step === "choose" && (
         <div className="selection-card">
           <div>
