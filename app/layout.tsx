@@ -1,18 +1,14 @@
-import "./../styles/globals.css";
+import "../styles/globals.css";
 
 export const metadata = {
-  title: "Can You Makeup",
-  description: "Gioco d’acquisto stile Tinder",
+  title: "ALL YOU CAN MAKEUP",
+  description: "Timer per il gioco delle live TikTok",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="it">
-      <body>
-        <main style={{maxWidth: "720px", margin: "0 auto", padding: "24px"}}>
-          {children}
-        </main>
-      </body>
+      <body className="app-body">{children}</body>
     </html>
   );
 }
