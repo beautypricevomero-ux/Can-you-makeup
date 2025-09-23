@@ -145,15 +145,15 @@
 .timer-screen {
   position: relative;
   width: 100%;
-  min-height: clamp(540px, 85vh, 920px);
+  min-height: clamp(620px, 90vh, 980px);
   background: rgba(255, 255, 255, 0.82);
   border-radius: 42px;
-  padding: clamp(24px, 6vw, 48px);
+  padding: clamp(28px, 6vw, 56px);
   box-shadow: 0 34px 70px rgba(148, 71, 206, 0.28);
   backdrop-filter: blur(20px);
   display: flex;
   flex-direction: column;
-  gap: clamp(20px, 5vw, 36px);
+  gap: clamp(24px, 5vw, 40px);
   justify-content: space-between;
   overflow: hidden;
   flex: 1;
@@ -175,8 +175,8 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: clamp(20px, 4vw, 32px);
-  max-width: min(960px, 100%);
+  gap: clamp(24px, 4.5vw, 36px);
+  max-width: min(1040px, 100%);
   margin: 0 auto;
   width: 100%;
 }
@@ -220,7 +220,7 @@
 
 .timer-title h2 {
   margin: 0;
-  font-size: clamp(22px, 4.8vw, 28px);
+  font-size: clamp(24px, 4.8vw, 32px);
   font-weight: 700;
 }
 
@@ -234,7 +234,7 @@
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.9);
   font-weight: 600;
-  font-size: 14px;
+  font-size: 15px;
   color: #db2777;
   box-shadow: inset 0 0 0 1px rgba(219, 39, 119, 0.15);
 }
@@ -243,20 +243,21 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
   text-align: center;
 }
 
 .timer-digits {
-  font-size: clamp(72px, 18vw, 110px);
+  font-size: clamp(96px, 20vw, 160px);
   font-weight: 700;
   letter-spacing: 0.04em;
   color: #1f1a2c;
+  text-shadow: 0 12px 32px rgba(236, 72, 153, 0.25);
 }
 
 .timer-legend {
-  font-size: 15px;
-  opacity: 0.7;
+  font-size: 16px;
+  opacity: 0.75;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
@@ -264,7 +265,7 @@
 .timer-progress {
   position: relative;
   width: 100%;
-  height: 12px;
+  height: 18px;
   background: rgba(255, 255, 255, 0.7);
   border-radius: 999px;
   overflow: hidden;
@@ -281,7 +282,7 @@
 .controls {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
+  gap: clamp(18px, 4vw, 28px);
   margin-top: auto;
 }
 
@@ -293,9 +294,9 @@
 
 .control-button {
   border: none;
-  border-radius: 22px;
-  padding: 16px;
-  font-size: 15px;
+  border-radius: 26px;
+  padding: clamp(18px, 3.6vw, 28px);
+  font-size: 16px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -305,11 +306,12 @@
   justify-content: center;
   text-align: center;
   color: #fff;
-  gap: 8px;
+  gap: 10px;
   box-shadow: 0 18px 34px rgba(236, 72, 153, 0.28);
   transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
   position: relative;
   overflow: hidden;
+  min-height: clamp(64px, 10vw, 88px);
 }
 
 .control-button::after {
